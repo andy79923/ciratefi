@@ -59,7 +59,7 @@ BOOL CciratefiApp::InitInstance()
 	// (例如，公司名稱或組織名稱)
 	SetRegistryKey(_T("本機 AppWizard 所產生的應用程式"));
 
-	CciratefiDlg dlg;
+	CciratefiDlg dlg=new CciratefiDlg();
 	m_pMainWnd = &dlg;
 	INT_PTR nResponse = dlg.DoModal();
 	if (nResponse == IDOK)

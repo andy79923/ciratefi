@@ -6,6 +6,8 @@
 #include "ciratefiApp.h"
 #include "ciratefiDlg.h"
 
+using namespace cv;
+
 #ifdef _DEBUG
 #define new DEBUG_NEW
 #endif
@@ -63,6 +65,7 @@ BEGIN_MESSAGE_MAP(CciratefiDlg, CDialog)
 	ON_WM_PAINT()
 	ON_WM_QUERYDRAGICON()
 	//}}AFX_MSG_MAP
+	ON_BN_CLICKED(IDC_BUTTONLOADSOURCE, &CciratefiDlg::OnBnClickedButtonLoadSource)
 END_MESSAGE_MAP()
 
 
@@ -151,3 +154,14 @@ HCURSOR CciratefiDlg::OnQueryDragIcon()
 	return static_cast<HCURSOR>(m_hIcon);
 }
 
+
+void CciratefiDlg::OnBnClickedButtonLoadSource()
+{
+	// TODO: 在此加入控制項告知處理常式程式碼
+	CFileDialog loadFile(TRUE, "bmp", "*.bmp", OFN_HIDEREADONLY | OFN_OVERWRITEPROMPT, "bmp|*.bmp|*.*|*.*||", this);
+
+	if(loadFile.DoModal() == IDOK)
+	{
+		_sourceImage=imread((LPCTSTR)loadFile.GetPathName(), CV_LOAD_IMAGE_GRAYSCALE);
+	}
+}

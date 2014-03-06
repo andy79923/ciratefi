@@ -37,6 +37,8 @@
 
 #include <afxcontrolbars.h>     // 功能區和控制列的 MFC 支援
 
+#include "opencv2/highgui/highgui.hpp"
+
 
 
 

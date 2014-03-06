@@ -3,6 +3,7 @@
 //
 
 #pragma once
+#include "stdafx.h"
 
 
 // CciratefiDlg 對話方塊
@@ -22,6 +23,7 @@ public:
 // 程式碼實作
 protected:
 	HICON m_hIcon;
+	cv::Mat _sourceImage;
 
 	// 產生的訊息對應函式
 	virtual BOOL OnInitDialog();
@@ -29,4 +31,6 @@ protected:
 	afx_msg void OnPaint();
 	afx_msg HCURSOR OnQueryDragIcon();
 	DECLARE_MESSAGE_MAP()
+public:
+	afx_msg void OnBnClickedButtonLoadSource();
 };
