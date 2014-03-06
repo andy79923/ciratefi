@@ -67,6 +67,7 @@
 			/>
 			<Tool
 				Name="VCLinkerTool"
+				AdditionalDependencies="opencv_core240d.lib opencv_imgproc240d.lib opencv_highgui240d.lib opencv_ml240d.lib opencv_video240d.lib opencv_features2d240d.lib opencv_calib3d240d.lib opencv_objdetect240d.lib opencv_contrib240d.lib opencv_legacy240d.lib opencv_flann240d.lib"
 				LinkIncremental="2"
 				GenerateDebugInformation="true"
 				SubSystem="2"
@@ -147,6 +148,7 @@
 			/>
 			<Tool
 				Name="VCLinkerTool"
+				AdditionalDependencies="opencv_core240.lib opencv_imgproc240.lib opencv_highgui240.lib opencv_ml240.lib opencv_video240.lib opencv_features2d240.lib opencv_calib3d240.lib opencv_objdetect240.lib opencv_contrib240.lib opencv_legacy240.lib opencv_flann240.lib"
 				LinkIncremental="1"
 				GenerateDebugInformation="true"
 				SubSystem="2"
