@@ -3,7 +3,7 @@
 //
 
 #include "stdafx.h"
-#include "ciratefi.h"
+#include "ciratefiApp.h"
 #include "ciratefiDlg.h"
 
 #ifdef _DEBUG
