@@ -266,5 +266,9 @@
 		</File>
 	</Files>
 	<Globals>
+		<Global
+			Name="RESOURCE_FILE"
+			Value="ciratefi.rc"
+		/>
 	</Globals>
 </VisualStudioProject>

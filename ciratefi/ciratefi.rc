@@ -1,11 +1,11 @@
-// Microsoft Visual C++ 產生的資源指令碼。
+// Microsoft Visual C++ generated resource script.
 //
 #include "resource.h"
 
 #define APSTUDIO_READONLY_SYMBOLS
 /////////////////////////////////////////////////////////////////////////////
 //
-// 已從 TEXTINCLUDE 2 資源產生。
+// Generated from the TEXTINCLUDE 2 resource.
 //
 #ifndef APSTUDIO_INVOKED
 #include "targetver.h"
@@ -15,27 +15,36 @@
 /////////////////////////////////////////////////////////////////////////////
 #undef APSTUDIO_READONLY_SYMBOLS
 
+/////////////////////////////////////////////////////////////////////////////
+// 中文 (台灣) resources
+
+#if !defined(AFX_RESOURCE_DLL) || defined(AFX_TARG_CHT)
+#ifdef _WIN32
+LANGUAGE LANG_CHINESE, SUBLANG_CHINESE_TRADITIONAL
+#pragma code_page(950)
+#endif //_WIN32
+
 #ifdef APSTUDIO_INVOKED
 /////////////////////////////////////////////////////////////////////////////
 //
 // TEXTINCLUDE
 //
 
-1 TEXTINCLUDE
+1 TEXTINCLUDE 
 BEGIN
     "resource.h\0"
 END
 
-2 TEXTINCLUDE
+2 TEXTINCLUDE 
 BEGIN
-	"#ifndef APSTUDIO_INVOKED\r\n"
+    "#ifndef APSTUDIO_INVOKED\r\n"
     "#include ""targetver.h""\r\n"
     "#endif\r\n"
     "#include ""afxres.h""\r\n"
     "\0"
 END
 
-3 TEXTINCLUDE
+3 TEXTINCLUDE 
 BEGIN
     "#define _AFX_NO_SPLITTER_RESOURCES\r\n"
     "#define _AFX_NO_OLE_RESOURCES\r\n"
@@ -46,38 +55,32 @@ BEGIN
     "LANGUAGE 4, 1\r\n"
     "#pragma code_page(950)\r\n"
     "#include ""res\\ciratefi.rc2""  // 非 Microsoft Visual C++ 編輯過的資源\r\n"
-    "#include ""l.CHT\\afxres.rc""  	// 標準元件\r\n"
+    "#include ""l.CHT\\afxres.rc""      // 標準元件\r\n"
     "#endif\r\n"
     "\0"
 END
 
-/////////////////////////////////////////////////////////////////////////////
 #endif    // APSTUDIO_INVOKED
 
 
 /////////////////////////////////////////////////////////////////////////////
 //
-// 圖示
+// Icon
 //
 
-// 先放置有最低 ID 的圖示，
-// 確保應用程式圖示在所有系統上保持一致。
-IDR_MAINFRAME           ICON         "res\\ciratefi.ico"
-
-
-#if !defined(AFX_RESOURCE_DLL) || defined(AFX_TARG_CHT)
-LANGUAGE 4, 1
-#pragma code_page(950)
+// Icon with lowest ID value placed first to ensure application icon
+// remains consistent on all systems.
+IDR_MAINFRAME           ICON                    "res\\ciratefi.ico"
 
 /////////////////////////////////////////////////////////////////////////////
 //
-// 對話方塊
+// Dialog
 //
 
 IDD_ABOUTBOX DIALOGEX 0, 0, 170, 62
 STYLE DS_SETFONT | DS_MODALFRAME | DS_FIXEDSYS | WS_POPUP | WS_CAPTION | WS_SYSMENU
 CAPTION "關於 ciratefi"
-FONT 9, "MS Shell Dlg"
+FONT 9, "MS Shell Dlg", 0, 0, 0x1
 BEGIN
     ICON            IDR_MAINFRAME,IDC_STATIC,14,14,21,20
     LTEXT           "ciratefi, 1.0 版",IDC_STATIC,42,14,114,8,SS_NOPREFIX
@@ -85,27 +88,23 @@ BEGIN
     DEFPUSHBUTTON   "確定",IDOK,113,41,50,14,WS_GROUP
 END
 
-IDD_CIRATEFI_DIALOG DIALOGEX  0, 0, 320, 200
-STYLE DS_SHELLFONT | WS_POPUP | WS_VISIBLE | WS_CAPTION
- | DS_MODALFRAME
- | WS_SYSMENU
+IDD_CIRATEFI_DIALOG DIALOGEX 0, 0, 320, 200
+STYLE DS_SETFONT | DS_MODALFRAME | DS_FIXEDSYS | WS_POPUP | WS_VISIBLE | WS_CAPTION | WS_SYSMENU
 EXSTYLE WS_EX_APPWINDOW
 CAPTION "ciratefi"
-FONT 9, "MS Shell Dlg"
+FONT 9, "MS Shell Dlg", 0, 0, 0x1
 BEGIN
-    DEFPUSHBUTTON   "確定",IDOK,209,179,50,14
-    PUSHBUTTON      "取消",IDCANCEL,263,179,50,14
-	CTEXT           "TODO: 在此放置對話方塊控制項。",IDC_STATIC,10,96,300,8
 END
+
 
 /////////////////////////////////////////////////////////////////////////////
 //
-// 版本
+// Version
 //
 
-VS_VERSION_INFO     VERSIONINFO
-  FILEVERSION       1,0,0,1
-  PRODUCTVERSION    1,0,0,1
+VS_VERSION_INFO VERSIONINFO
+ FILEVERSION 1,0,0,1
+ PRODUCTVERSION 1,0,0,1
  FILEFLAGSMASK 0x3fL
 #ifdef _DEBUG
  FILEFLAGS 0x1L
@@ -116,25 +115,26 @@ VS_VERSION_INFO     VERSIONINFO
  FILETYPE 0x1L
  FILESUBTYPE 0x0L
 BEGIN
-	BLOCK "StringFileInfo"
-	BEGIN
+    BLOCK "StringFileInfo"
+    BEGIN
         BLOCK "040403b6"
-		BEGIN
+        BEGIN
             VALUE "CompanyName", "TODO: <公司名稱>"
             VALUE "FileDescription", "TODO: <檔案說明>"
-			VALUE "FileVersion",     "1.0.0.1"
-			VALUE "InternalName",    "ciratefi.exe"
+            VALUE "FileVersion", "1.0.0.1"
+            VALUE "InternalName", "ciratefi.exe"
             VALUE "LegalCopyright", "TODO: (c) <公司名稱>.  All rights reserved."
-			VALUE "OriginalFilename","ciratefi.exe"
+            VALUE "OriginalFilename", "ciratefi.exe"
             VALUE "ProductName", "TODO: <產品名稱>"
-			VALUE "ProductVersion",  "1.0.0.1"
-		END
-	END
-	BLOCK "VarFileInfo"
-	BEGIN
-		VALUE "Translation", 0x0404, 950
+            VALUE "ProductVersion", "1.0.0.1"
+        END
+    END
+    BLOCK "VarFileInfo"
+    BEGIN
+        VALUE "Translation", 0x404, 950
     END
 END
+
 
 /////////////////////////////////////////////////////////////////////////////
 //
@@ -142,7 +142,7 @@ END
 //
 
 #ifdef APSTUDIO_INVOKED
-GUIDELINES DESIGNINFO
+GUIDELINES DESIGNINFO 
 BEGIN
     IDD_ABOUTBOX, DIALOG
     BEGIN
@@ -151,6 +151,7 @@ BEGIN
         TOPMARGIN, 7
         BOTTOMMARGIN, 55
     END
+
     IDD_CIRATEFI_DIALOG, DIALOG
     BEGIN
         LEFTMARGIN, 7
@@ -162,24 +163,25 @@ END
 #endif    // APSTUDIO_INVOKED
 
 
-
 /////////////////////////////////////////////////////////////////////////////
 //
-// 字串資料表
+// String Table
 //
 
-STRINGTABLE
+STRINGTABLE 
 BEGIN
     IDS_ABOUTBOX            "關於 ciratefi(&A)..."
 END
 
+#endif    // 中文 (台灣) resources
+/////////////////////////////////////////////////////////////////////////////
 
-#endif
+
 
 #ifndef APSTUDIO_INVOKED
 /////////////////////////////////////////////////////////////////////////////
 //
-// 已從 TEXTINCLUDE 3 資源產生。
+// Generated from the TEXTINCLUDE 3 resource.
 //
 #define _AFX_NO_SPLITTER_RESOURCES
 #define _AFX_NO_OLE_RESOURCES
@@ -189,9 +191,10 @@ END
 #if !defined(AFX_RESOURCE_DLL) || defined(AFX_TARG_CHT)
 LANGUAGE 4, 1
 #pragma code_page(950)
-#include "res\\ciratefi.rc2"  // 非 Microsoft Visual C++ 編輯過的資源
-#include "l.CHT\\afxres.rc"  	// 標準元件
+#include "res\ciratefi.rc2"  // 非 Microsoft Visual C++ 編輯過的資源
+#include "l.CHT\afxres.rc"      // 標準元件
 #endif
+
 /////////////////////////////////////////////////////////////////////////////
-#endif    // 非 APSTUDIO_INVOKED
+#endif    // not APSTUDIO_INVOKED
 
