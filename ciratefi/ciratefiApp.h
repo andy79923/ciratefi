@@ -19,6 +19,7 @@ class CciratefiApp : public CWinAppEx
 {
 public:
 	CciratefiApp();
+	static void ShowMatOnPicture(cv::Mat& image, CDialog *dlg, int pID);
 
 // ÂÐ¼g
 	public:

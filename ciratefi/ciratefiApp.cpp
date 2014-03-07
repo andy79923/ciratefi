@@ -6,6 +6,8 @@
 #include "ciratefiApp.h"
 #include "ciratefiDlg.h"
 
+using namespace cv;
+
 #ifdef _DEBUG
 #define new DEBUG_NEW
 #endif
@@ -76,4 +78,71 @@ BOOL CciratefiApp::InitInstance()
 	// 因為已經關閉對話方塊，傳回 FALSE，所以我們會結束應用程式，
 	// 而非提示開始應用程式的訊息。
 	return FALSE;
+}
+
+void CciratefiApp::ShowMatOnPicture(Mat& image, CDialog* dlg, int pID)
+{
+
+	CRect PictureRect;
+	CStatic* PictureControl=(CStatic*)dlg->GetDlgItem(pID);
+	PictureControl->GetClientRect(&PictureRect);
+	CDC *pDc = PictureControl->GetWindowDC();
+	SetStretchBltMode(pDc->m_hDC,STRETCH_HALFTONE);
+
+	Mat resizeImage = image.clone();
+	if(resizeImage.rows>PictureRect.Height() || resizeImage.cols>PictureRect.Width())
+	{
+		double resizeRatio = min((double)PictureRect.Width()/(double)image.cols, (double)PictureRect.Height()/(double)image.rows);
+		resize(image, resizeImage, Size(), resizeRatio, resizeRatio);
+	}
+
+	CImage outputImage;
+	int width = resizeImage.cols;
+	int height = resizeImage.rows;
+	int channels = resizeImage.channels();
+	outputImage.Destroy(); //clear
+	outputImage.Create(width, height, 8*channels);
+
+	if(channels==1)
+	{
+		RGBQUAD* ColorTable;
+		int MaxColors=outputImage.GetMaxColorTableEntries();
+		ColorTable = new RGBQUAD[MaxColors];
+		outputImage.GetColorTable(0, MaxColors, ColorTable);
+		for (int i = 0; i < MaxColors; i++)
+		{
+			ColorTable[i].rgbBlue = (BYTE)i;
+			ColorTable[i].rgbGreen = (BYTE)i;
+			ColorTable[i].rgbRed = (BYTE)i;
+		}
+		outputImage.SetColorTable(0, MaxColors, ColorTable);
+		delete []ColorTable;
+	}
+
+
+	uchar* ps;
+	uchar* pimg = (uchar*)outputImage.GetBits(); //A pointer to the bitmap buffer
+	//The pitch is the distance, in bytes. represent the beginning of
+	// one bitmap line and the beginning of the next bitmap line
+	int step = outputImage.GetPitch();
+	for (int i = 0; i < height; ++i)
+	{
+		ps = (resizeImage.ptr<uchar>(i));
+		for ( int j = 0; j < width; j++ )
+		{
+			if ( channels == 1 ) //gray
+			{
+				*(pimg + i*step + j) = ps[j];
+			}
+			else if ( channels == 3 ) //color
+			{
+				for (int k = 0 ; k < 3; k++ )
+				{
+					*(pimg + i*step + j*3 + k ) = ps[j*3 + k];
+				}
+			}
+		}
+	}
+	outputImage.Draw(pDc->m_hDC, CRect(CPoint(PictureRect.TopLeft().x+(PictureRect.Width()-width)/2,PictureRect.TopLeft().y+(PictureRect.Height()-height)/2), CSize(width,height)));
+	dlg->ReleaseDC(pDc);
 }

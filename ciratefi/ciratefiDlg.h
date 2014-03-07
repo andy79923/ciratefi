@@ -3,7 +3,6 @@
 //
 
 #pragma once
-#include "stdafx.h"
 
 
 // CciratefiDlg ¹ï¸Ü¤è¶ô
