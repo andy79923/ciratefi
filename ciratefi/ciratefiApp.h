@@ -15,10 +15,10 @@
 // 請參閱實作此類別的 ciratefi.cpp
 //
 
-class CciratefiApp : public CWinAppEx
+class CiratefiApp : public CWinAppEx
 {
 public:
-	CciratefiApp();
+	CiratefiApp();
 
 // 覆寫
 	public:
@@ -29,4 +29,4 @@ public:
 	DECLARE_MESSAGE_MAP()
 };
 
-extern CciratefiApp theApp;
+extern CiratefiApp theApp;

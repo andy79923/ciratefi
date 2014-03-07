@@ -13,14 +13,14 @@
 
 // CciratefiApp
 
-BEGIN_MESSAGE_MAP(CciratefiApp, CWinAppEx)
+BEGIN_MESSAGE_MAP(CiratefiApp, CWinAppEx)
 	ON_COMMAND(ID_HELP, &CWinApp::OnHelp)
 END_MESSAGE_MAP()
 
 
 // CciratefiApp 建構
 
-CciratefiApp::CciratefiApp()
+CiratefiApp::CiratefiApp()
 {
 	// TODO: 在此加入建構程式碼，
 	// 將所有重要的初始設定加入 InitInstance 中
@@ -29,12 +29,12 @@ CciratefiApp::CciratefiApp()
 
 // 僅有的一個 CciratefiApp 物件
 
-CciratefiApp theApp;
+CiratefiApp theApp;
 
 
 // CciratefiApp 初始設定
 
-BOOL CciratefiApp::InitInstance()
+BOOL CiratefiApp::InitInstance()
 {
 	// 假如應用程式資訊清單指定使用 ComCtl32.dll 6 (含) 以後版本，
 	// 來啟動視覺化樣式，在 Windows XP 上，則需要 InitCommonControls()。
@@ -59,7 +59,7 @@ BOOL CciratefiApp::InitInstance()
 	// (例如，公司名稱或組織名稱)
 	SetRegistryKey(_T("本機 AppWizard 所產生的應用程式"));
 
-	CciratefiDlg dlg;
+	CiratefiDlg dlg;
 	m_pMainWnd = &dlg;
 	INT_PTR nResponse = dlg.DoModal();
 	if (nResponse == IDOK)

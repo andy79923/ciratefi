@@ -6,11 +6,11 @@
 
 
 // CciratefiDlg 對話方塊
-class CciratefiDlg : public CDialog
+class CiratefiDlg : public CDialog
 {
 // 建構
 public:
-	CciratefiDlg(CWnd* pParent = NULL);	// 標準建構函式
+	CiratefiDlg(CWnd* pParent = NULL);	// 標準建構函式
 
 // 對話方塊資料
 	enum { IDD = IDD_CIRATEFI_DIALOG };

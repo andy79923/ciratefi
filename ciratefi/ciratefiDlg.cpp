@@ -47,18 +47,18 @@ END_MESSAGE_MAP()
 
 
 
-CciratefiDlg::CciratefiDlg(CWnd* pParent /*=NULL*/)
-	: CDialog(CciratefiDlg::IDD, pParent)
+CiratefiDlg::CiratefiDlg(CWnd* pParent /*=NULL*/)
+	: CDialog(CiratefiDlg::IDD, pParent)
 {
 	m_hIcon = AfxGetApp()->LoadIcon(IDR_MAINFRAME);
 }
 
-void CciratefiDlg::DoDataExchange(CDataExchange* pDX)
+void CiratefiDlg::DoDataExchange(CDataExchange* pDX)
 {
 	CDialog::DoDataExchange(pDX);
 }
 
-BEGIN_MESSAGE_MAP(CciratefiDlg, CDialog)
+BEGIN_MESSAGE_MAP(CiratefiDlg, CDialog)
 	ON_WM_SYSCOMMAND()
 	ON_WM_PAINT()
 	ON_WM_QUERYDRAGICON()
@@ -68,7 +68,7 @@ END_MESSAGE_MAP()
 
 // CciratefiDlg 訊息處理常式
 
-BOOL CciratefiDlg::OnInitDialog()
+BOOL CiratefiDlg::OnInitDialog()
 {
 	CDialog::OnInitDialog();
 
@@ -102,7 +102,7 @@ BOOL CciratefiDlg::OnInitDialog()
 	return TRUE;  // 傳回 TRUE，除非您對控制項設定焦點
 }
 
-void CciratefiDlg::OnSysCommand(UINT nID, LPARAM lParam)
+void CiratefiDlg::OnSysCommand(UINT nID, LPARAM lParam)
 {
 	if ((nID & 0xFFF0) == IDM_ABOUTBOX)
 	{
@@ -119,7 +119,7 @@ void CciratefiDlg::OnSysCommand(UINT nID, LPARAM lParam)
 // 以便繪製圖示。對於使用文件/檢視模式的 MFC 應用程式，
 // 框架會自動完成此作業。
 
-void CciratefiDlg::OnPaint()
+void CiratefiDlg::OnPaint()
 {
 	if (IsIconic())
 	{
@@ -146,7 +146,7 @@ void CciratefiDlg::OnPaint()
 
 // 當使用者拖曳最小化視窗時，
 // 系統呼叫這個功能取得游標顯示。
-HCURSOR CciratefiDlg::OnQueryDragIcon()
+HCURSOR CiratefiDlg::OnQueryDragIcon()
 {
 	return static_cast<HCURSOR>(m_hIcon);
 }
