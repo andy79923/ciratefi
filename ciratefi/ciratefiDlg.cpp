@@ -163,6 +163,8 @@ void CciratefiDlg::OnBnClickedButtonLoadSource()
 	if(loadFile.DoModal() == IDOK)
 	{
 		_sourceImage=imread((LPCTSTR)loadFile.GetPathName(), CV_LOAD_IMAGE_GRAYSCALE);
+		RedrawWindow();
 		CciratefiApp::ShowMatOnPicture(_sourceImage, this, IDC_PICTURESOURCEIMAGE);
+		
 	}
 }
