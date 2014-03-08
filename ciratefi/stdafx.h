@@ -5,6 +5,8 @@
 
 #pragma once
 
+#define _USE_MATH_DEFINES 
+
 #ifndef _SECURE_ATL
 #define _SECURE_ATL 1
 #endif
@@ -36,6 +38,10 @@
 #endif // _AFX_NO_AFXCMN_SUPPORT
 
 #include <afxcontrolbars.h>     // 功能區和控制列的 MFC 支援
+
+
+#include "opencv2/core/core.hpp"
+#include <cmath>
 
 
 
