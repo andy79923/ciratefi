@@ -1,9 +1,9 @@
-#ifndef __CIRATEALGORITHM_H__
-#define __CIRATEALGORITHM_H__
+#ifndef __CIRATEFIALGORITHM_H__
+#define __CIRATEFIALGORITHM_H__
 
 namespace Ciratefi
 {
-	class CirateData
+	class CiratefiData
 	{
 
 	};

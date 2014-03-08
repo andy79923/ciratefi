@@ -15,7 +15,7 @@ public:
 
 // 對話方塊資料
 	enum { IDD = IDD_CIRATEFI_DIALOG };
-	Ciratefi::CirateData _cirateData;
+	Ciratefi::CiratefiData _cirateData;
 
 	protected:
 	virtual void DoDataExchange(CDataExchange* pDX);	// DDX/DDV 支援
