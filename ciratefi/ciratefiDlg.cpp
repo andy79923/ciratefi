@@ -177,5 +177,7 @@ void CciratefiDlg::OnBnClickedButtonloadtemplate()
 	if(loadFile.DoModal() == IDOK)
 	{
 		_templateImage=imread((LPCTSTR)loadFile.GetPathName(), CV_LOAD_IMAGE_GRAYSCALE);
+		RedrawWindow();
+		CciratefiApp::ShowMatOnPicture(_templateImage, this, IDC_PICTURETEMPLATE);
 	}
 }
