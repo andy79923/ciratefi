@@ -66,6 +66,7 @@ BEGIN_MESSAGE_MAP(CciratefiDlg, CDialog)
 	ON_WM_QUERYDRAGICON()
 	//}}AFX_MSG_MAP
 	ON_BN_CLICKED(IDC_BUTTONLOADSOURCE, &CciratefiDlg::OnBnClickedButtonLoadSource)
+	ON_BN_CLICKED(IDC_BUTTONLOADTEMPLATE, &CciratefiDlg::OnBnClickedButtonloadtemplate)
 END_MESSAGE_MAP()
 
 
@@ -165,6 +166,16 @@ void CciratefiDlg::OnBnClickedButtonLoadSource()
 		_sourceImage=imread((LPCTSTR)loadFile.GetPathName(), CV_LOAD_IMAGE_GRAYSCALE);
 		RedrawWindow();
 		CciratefiApp::ShowMatOnPicture(_sourceImage, this, IDC_PICTURESOURCEIMAGE);
-		
+	}
+}
+
+void CciratefiDlg::OnBnClickedButtonloadtemplate()
+{
+	// TODO: 在此加入控制項告知處理常式程式碼
+	CFileDialog loadFile(TRUE, "bmp", "*.bmp", OFN_HIDEREADONLY | OFN_OVERWRITEPROMPT, "bmp|*.bmp|*.*|*.*||", this);
+
+	if(loadFile.DoModal() == IDOK)
+	{
+		_templateImage=imread((LPCTSTR)loadFile.GetPathName(), CV_LOAD_IMAGE_GRAYSCALE);
 	}
 }

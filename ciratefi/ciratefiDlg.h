@@ -23,6 +23,7 @@ public:
 protected:
 	HICON m_hIcon;
 	cv::Mat _sourceImage;
+	cv::Mat _templateImage;
 
 	// 產生的訊息對應函式
 	virtual BOOL OnInitDialog();
@@ -32,4 +33,5 @@ protected:
 	DECLARE_MESSAGE_MAP()
 public:
 	afx_msg void OnBnClickedButtonLoadSource();
+	afx_msg void OnBnClickedButtonloadtemplate();
 };
