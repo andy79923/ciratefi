@@ -30,6 +30,7 @@ namespace Ciratefi
 		cv::Point ValidImageRange(cv::Point& position, cv::Mat& image);
 		double CircularSample(cv::Mat& image, int row, int col, int radius);
 		void Cisssa(cv::Mat& sourceImage);
+		cv::Mat quadradaimpar(cv::Mat& image);
 
 	private:
 		int _scaleNum;
