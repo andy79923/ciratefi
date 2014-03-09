@@ -11,7 +11,7 @@ namespace Ciratefi
 		CiratefiData():_scaleNum(5),_initialScale(0.5),_finalScale(1),_angleNum(36),_scaleThreshold(0.95),_angleThreshold(0.8),_nccThreshold(0.9)
 			,_isMatchNegative(false),_circleNum(16),_initialRadius(0),_finalRadius(-1),_tefiTolerance(1){}
 		void CountParameter(cv::Mat& templateImage);
-		double scale(int s){ return _initialScale*pow(_passoesc,s);}
+		double scale(double s){ return _initialScale*pow(_passoesc,s);}
 		void SetScaleNum(int scaleNum){_scaleNum=scaleNum;}
 		void SetInitialScale(double initialScale){_initialScale=initialScale;}
 		void SetFinalScale(double finalScale){_finalScale=finalScale;}
@@ -31,6 +31,7 @@ namespace Ciratefi
 		double CircularSample(cv::Mat& image, int row, int col, int radius);
 		void Cisssa(cv::Mat& sourceImage);
 		cv::Mat quadradaimpar(cv::Mat& image);
+		void Cissq(cv::Mat& templateImage);
 
 	private:
 		int _scaleNum;

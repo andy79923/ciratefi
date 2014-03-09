@@ -85,5 +85,24 @@ namespace Ciratefi
 		Mat roi(tempRoi.clone());
 		return roi;
 	}
+
+	void CiratefiData::Cissq(Mat& templateImage)
+	{
+		_cq.resize(_scaleNum*_circleNum);
+		for (int f=0; f<_scaleNum; f++) 
+		{
+			double scaleRatio=scale(f);
+
+			int length=ceil(scaleRatio*templateImage.rows);
+			Mat resizedTemplate(length, length, templateImage.type());
+			resize(templateImage, resizedTemplate, Size(length, length));
+			int resizedCircleNum=min((int)floor(scaleRatio/scale(_scaleNum-1)*(double)_circleNum),_circleNum);
+			for (int c=0; c<resizedCircleNum; c++) 
+			{
+				_cq[f*_circleNum+c]=CircularSample(resizedTemplate,(resizedTemplate.rows-1)/2,(resizedTemplate.cols-1)/2,round((double)c*_circleDistance+_initialRadius));
+			}
+			for (int c=resizedCircleNum; c<_circleNum; c++) _cq[f*_circleNum+c]=1.0;
+		}
+	}
 }
 
