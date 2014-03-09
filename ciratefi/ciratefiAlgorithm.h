@@ -23,6 +23,12 @@ namespace Ciratefi
 		void SetCircleNum(int circleNum){_circleNum=circleNum;}
 		void SetInitialRadius(double initialRadius){_initialRadius=initialRadius;}
 		void SetTefiTolerance(int tefiTolerance){_tefiTolerance=tefiTolerance;}
+		
+		double round(double val, int precision);
+		template <class T>
+		T clip(const T val, const T lower, const T upper){return std::max(lower, std::min(val, upper));}
+		double CircularSample(cv::Mat& image, int row, int col, int radius);
+		void Cisssa(cv::Mat& sourceImage);
 
 	private:
 		int _scaleNum;
