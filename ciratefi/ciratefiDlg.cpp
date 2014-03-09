@@ -6,6 +6,8 @@
 #include "ciratefiApp.h"
 #include "ciratefiDlg.h"
 
+using namespace cv;
+
 #ifdef _DEBUG
 #define new DEBUG_NEW
 #endif
@@ -63,6 +65,9 @@ BEGIN_MESSAGE_MAP(CiratefiDlg, CDialog)
 	ON_WM_PAINT()
 	ON_WM_QUERYDRAGICON()
 	//}}AFX_MSG_MAP
+	ON_BN_CLICKED(IDC_BUTTONLOADSOURCE, &CiratefiDlg::OnBnClickedButtonLoadSource)
+	ON_BN_CLICKED(IDC_BUTTONLOADTEMPLATE, &CiratefiDlg::OnBnClickedButtonloadtemplate)
+	ON_BN_CLICKED(IDC_BUTTONMATCH, &CiratefiDlg::OnBnClickedButtonMatch)
 END_MESSAGE_MAP()
 
 
@@ -151,3 +156,51 @@ HCURSOR CiratefiDlg::OnQueryDragIcon()
 	return static_cast<HCURSOR>(m_hIcon);
 }
 
+
+void CiratefiDlg::OnBnClickedButtonLoadSource()
+{
+	// TODO: 在此加入控制項告知處理常式程式碼
+	CFileDialog loadFile(TRUE, "bmp", "*.bmp", OFN_HIDEREADONLY | OFN_OVERWRITEPROMPT, "bmp|*.bmp|*.*|*.*||", this);
+
+	if(loadFile.DoModal() == IDOK)
+	{
+		_sourceImage=imread((LPCTSTR)loadFile.GetPathName(), CV_LOAD_IMAGE_GRAYSCALE);
+		CRect rect;
+		((CStatic*)GetDlgItem(IDC_PICTURESOURCEIMAGE))->GetWindowRect(rect);
+		ScreenToClient(rect);
+		RedrawWindow(rect);
+		CiratefiApp::ShowMatOnPicture(_sourceImage, this, IDC_PICTURESOURCEIMAGE);
+	}
+}
+
+void CiratefiDlg::OnBnClickedButtonloadtemplate()
+{
+	// TODO: 在此加入控制項告知處理常式程式碼
+	CFileDialog loadFile(TRUE, "bmp", "*.bmp", OFN_HIDEREADONLY | OFN_OVERWRITEPROMPT, "bmp|*.bmp|*.*|*.*||", this);
+
+	if(loadFile.DoModal() == IDOK)
+	{
+		_templateImage=imread((LPCTSTR)loadFile.GetPathName(), CV_LOAD_IMAGE_GRAYSCALE);
+		CRect rect;
+		((CStatic*)GetDlgItem(IDC_PICTURETEMPLATE))->GetWindowRect(rect);
+		ScreenToClient(rect);
+		RedrawWindow(rect);
+		CiratefiApp::ShowMatOnPicture(_templateImage, this, IDC_PICTURETEMPLATE);
+	}
+}
+
+void CiratefiDlg::OnBnClickedButtonMatch()
+{
+	// TODO: 在此加入控制項告知處理常式程式碼
+	_templateImage=_cirateData.quadradaimpar(_templateImage);
+	_cirateData.CountParameter(_templateImage);
+	_cirateData.Cissq(_templateImage);
+	_cirateData.Cisssa(_sourceImage);
+	_cirateData.Cifi(_sourceImage,_templateImage);
+	Mat cifiResult=_cirateData.DrawCifiResult(_sourceImage);
+	CRect rect;
+	((CStatic*)GetDlgItem(IDC_PICTURESOURCEIMAGE))->GetWindowRect(rect);
+	ScreenToClient(rect);
+	RedrawWindow(rect);
+	CiratefiApp::ShowMatOnPicture(cifiResult, this, IDC_PICTURESOURCEIMAGE);
+}

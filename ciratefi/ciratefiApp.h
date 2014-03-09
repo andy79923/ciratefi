@@ -20,6 +20,8 @@ class CiratefiApp : public CWinAppEx
 public:
 	CiratefiApp();
 
+	static void ShowMatOnPicture(cv::Mat& image, CDialog *dlg, int pID);
+
 // ÂÐ¼g
 	public:
 	virtual BOOL InitInstance();
