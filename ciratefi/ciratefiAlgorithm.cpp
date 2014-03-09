@@ -27,8 +27,8 @@ namespace Ciratefi
 
 	Point CiratefiData::ValidImageRange(Point& position, cv::Mat& image)
 	{
-		position.x=(position.x>=image.rows)?image.rows-1:((position.x<0)?0:position.x);
-		position.y=(position.y>=image.cols)?image.cols-1:((position.y<0)?0:position.y);
+		position.x=(position.x>=image.cols)?image.cols-1:((position.x<0)?0:position.x);
+		position.y=(position.y>=image.rows)?image.rows-1:((position.y<0)?0:position.y);
 		return position;
 	}
 
@@ -37,10 +37,10 @@ namespace Ciratefi
 		int row2=0; int col2=radius; double sum=0; double count=0;
 		while (col2>0) 
 		{
-			sum=sum+image.at<uchar>(ValidImageRange(Point(row+row2, col+col2), image))
-				+image.at<uchar>(ValidImageRange(Point(row-row2, col-col2), image))
-				+image.at<uchar>(ValidImageRange(Point(row+col2, col-row2), image))
-				+image.at<uchar>(ValidImageRange(Point(row-col2, col+row2), image));
+			sum=sum+image.at<uchar>(ValidImageRange(Point(col+col2, row+row2), image))
+				+image.at<uchar>(ValidImageRange(Point(col-col2, row-row2), image))
+				+image.at<uchar>(ValidImageRange(Point(col-row2, row+col2), image))
+				+image.at<uchar>(ValidImageRange(Point(col+row2, row-col2), image));
 			count=count+4;
 
 			int mh=abs((row2+1)*(row2+1)+col2*col2-radius*radius);
