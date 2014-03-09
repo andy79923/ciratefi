@@ -27,6 +27,7 @@ namespace Ciratefi
 		double round(double val, int precision);
 		template <class T>
 		T clip(const T val, const T lower, const T upper){return std::max(lower, std::min(val, upper));}
+		cv::Point ValidImageRange(cv::Point& position, cv::Mat& image);
 		double CircularSample(cv::Mat& image, int row, int col, int radius);
 		void Cisssa(cv::Mat& sourceImage);
 

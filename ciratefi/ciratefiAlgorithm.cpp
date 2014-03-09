@@ -25,15 +25,22 @@ namespace Ciratefi
 		return val/mul;
 	}
 
+	Point CiratefiData::ValidImageRange(Point& position, cv::Mat& image)
+	{
+		position.x=(position.x>=image.rows)?image.rows-1:((position.x<0)?0:position.x);
+		position.y=(position.y>=image.cols)?image.cols-1:((position.y<0)?0:position.y);
+		return position;
+	}
+
 	double CiratefiData::CircularSample(Mat& image, int row, int col, int radius)
 	{ 
 		int row2=0; int col2=radius; double sum=0; double count=0;
 		while (col2>0) 
 		{
-			sum=sum+image.at<uchar>((row+row2<image.rows)?row+row2:image.rows-1, (col+col2<image.cols)?col+col2:image.cols-1)
-				+image.at<uchar>((row-row2<0)?0:row-row2, (col-col2<0)?0:col-col2)
-				+image.at<uchar>((row+col2<image.rows)?row+col2:image.rows-1, (col-row2<0)?0:col-row2)
-				+image.at<uchar>((row-col2<0)?0:row-col2, (col+row2<image.cols)?col+row2:image.cols-1);
+			sum=sum+image.at<uchar>(ValidImageRange(Point(row+row2, col+col2), image))
+				+image.at<uchar>(ValidImageRange(Point(row-row2, col-col2), image))
+				+image.at<uchar>(ValidImageRange(Point(row+col2, col-row2), image))
+				+image.at<uchar>(ValidImageRange(Point(row-col2, col+row2), image));
 			count=count+4;
 
 			int mh=abs((row2+1)*(row2+1)+col2*col2-radius*radius);
