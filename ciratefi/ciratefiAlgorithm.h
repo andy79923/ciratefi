@@ -49,6 +49,7 @@ namespace Ciratefi
 		cv::Mat quadradaimpar(cv::Mat& image);
 		void Cissq(cv::Mat& templateImage);
 		void Cifi(cv::Mat& sourceImage, cv::Mat& templateImage);
+		cv::Mat DrawCifiResult(cv::Mat& sourceImage);
 
 	private:
 		int _scaleNum;
