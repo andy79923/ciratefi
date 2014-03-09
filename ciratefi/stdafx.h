@@ -5,6 +5,8 @@
 
 #pragma once
 
+#define _USE_MATH_DEFINES 
+
 #ifndef _SECURE_ATL
 #define _SECURE_ATL 1
 #endif
@@ -39,6 +41,10 @@
 
 #include "opencv2/highgui/highgui.hpp"
 #include "opencv2/imgproc/imgproc.hpp"
+
+
+#include "opencv2/imgproc/imgproc.hpp"
+#include <cmath>
 
 
 

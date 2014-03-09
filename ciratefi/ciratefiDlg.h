@@ -3,6 +3,7 @@
 //
 
 #pragma once
+#include "ciratefiAlgorithm.h"
 
 
 // CciratefiDlg 對話方塊
@@ -14,6 +15,7 @@ public:
 
 // 對話方塊資料
 	enum { IDD = IDD_CIRATEFI_DIALOG };
+	Ciratefi::CiratefiData _cirateData;
 
 	protected:
 	virtual void DoDataExchange(CDataExchange* pDX);	// DDX/DDV 支援
