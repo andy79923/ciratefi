@@ -104,5 +104,78 @@ namespace Ciratefi
 			for (int c=resizedCircleNum; c<_circleNum; c++) _cq[f*_circleNum+c]=1.0;
 		}
 	}
+
+	void CiratefiData::Cifi(cv::Mat& sourceImage, cv::Mat& templateImage)
+	{
+		vector<vector<double> > cqi(_scaleNum);
+		vector<double> cqi2(_scaleNum);
+		for (int s=0; s<_scaleNum; s++) 
+		{
+			int resizedCircleNum=_circleNum-1;
+			while (_cq[s*_circleNum+resizedCircleNum]==1.0 && 0<=resizedCircleNum) resizedCircleNum--;
+			resizedCircleNum++;
+			if (resizedCircleNum<3) MessageBox(NULL, "Query.mat has a row with less than 3 columns", "Error", MB_ICONERROR | MB_OK);
+			cqi[s].resize(resizedCircleNum);
+			double meanCqi=0;
+			for (int c=0; c<resizedCircleNum; c++) 
+			{
+				cqi[s][c]=_cq[s*_circleNum+c];
+				meanCqi+=cqi[s][c];
+			}
+			meanCqi/=(double)resizedCircleNum;
+			cqi2[s]=0;
+			for(vector<double>::iterator i=cqi[s].begin(); i!=cqi[s].end(); i++)
+			{
+				(*i)-=meanCqi;
+				cqi2[s]+=(*i)*(*i);
+			}
+		}
+
+		_cis.clear();
+		for (int row=0; row<sourceImage.rows; row++) 
+		{
+			for (int col=0; col<sourceImage.cols; col++) 
+			{
+				double maxCoef=-2;
+				int maxScale=0;
+				for (int s=0; s<_scaleNum; s++) 
+				{
+					vector<double>& x=cqi[s];
+					double x2=cqi2[s];
+					vector<double> y(cqi[s].size());
+					double meanY=0;
+					double y2=0;
+					for (int k=0; k<y.size(); k++)
+					{
+						y[k]=_ca[k*sourceImage.rows*sourceImage.cols+row*sourceImage.cols+col];
+						meanY+=y[k];
+					}
+					meanY/=(double)y.size();
+					for (int k=0; k<y.size(); k++)
+					{
+						y[k]-=meanY;
+						y2+=y[k]*y[k];
+					}
+
+					double coef=0;
+					for(int i=0;i<x.size();i++)
+					{
+						coef+=x[i]*y[i];
+					}
+					coef/=(sqrt(x2)*sqrt(y2));
+					if (_isMatchNegative==true) coef=abs(coef);
+					if (coef>maxCoef) 
+					{
+						maxCoef=coef;
+						maxScale=s;
+					}
+				}
+				if (maxCoef>_scaleThreshold) 
+				{
+					_cis.push_back(CorrData(row, col, maxScale, -1, maxCoef));
+				}
+			}
+		}
+	}
 }
 

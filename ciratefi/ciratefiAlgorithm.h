@@ -5,6 +5,22 @@
 
 namespace Ciratefi
 {
+	class CorrData
+	{
+	public:
+		CorrData(int row, int col, int scale, int angle, double coefficient):_row(row),_col(col),_scale(scale),_angle(angle),_coefficient(coefficient){}
+		double GetCoefficient(){return _coefficient;}
+		int GetScale(){return _scale;}
+		int GetAngle(){return _angle;}
+		int GetRow(){return _row;}
+		int GetCol(){return _col;}
+	private:
+		double _coefficient;
+		int _scale;
+		int _angle;
+		int _row;
+		int _col;
+	};
 	class CiratefiData
 	{
 	public:
@@ -32,6 +48,7 @@ namespace Ciratefi
 		void Cisssa(cv::Mat& sourceImage);
 		cv::Mat quadradaimpar(cv::Mat& image);
 		void Cissq(cv::Mat& templateImage);
+		void Cifi(cv::Mat& sourceImage, cv::Mat& templateImage);
 
 	private:
 		int _scaleNum;
@@ -54,6 +71,7 @@ namespace Ciratefi
 		std::vector<double> _ca;
 		std::vector<double> _cq;
 		std::vector<double> _rq;
+		std::vector<CorrData> _cis;
 	};
 
 
