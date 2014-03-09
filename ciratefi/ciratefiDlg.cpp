@@ -67,6 +67,7 @@ BEGIN_MESSAGE_MAP(CciratefiDlg, CDialog)
 	//}}AFX_MSG_MAP
 	ON_BN_CLICKED(IDC_BUTTONLOADSOURCE, &CciratefiDlg::OnBnClickedButtonLoadSource)
 	ON_BN_CLICKED(IDC_BUTTONLOADTEMPLATE, &CciratefiDlg::OnBnClickedButtonloadtemplate)
+	ON_BN_CLICKED(IDC_BUTTONMATCH, &CciratefiDlg::OnBnClickedButtonMatch)
 END_MESSAGE_MAP()
 
 
@@ -186,4 +187,20 @@ void CciratefiDlg::OnBnClickedButtonloadtemplate()
 		RedrawWindow(rect);
 		CciratefiApp::ShowMatOnPicture(_templateImage, this, IDC_PICTURETEMPLATE);
 	}
+}
+
+void CciratefiDlg::OnBnClickedButtonMatch()
+{
+	// TODO: 在此加入控制項告知處理常式程式碼
+	_templateImage=_cirateData.quadradaimpar(_templateImage);
+	_cirateData.CountParameter(_templateImage);
+	_cirateData.Cissq(_templateImage);
+	_cirateData.Cisssa(_sourceImage);
+	_cirateData.Cifi(_sourceImage,_templateImage);
+	Mat cifiResult=_cirateData.DrawCifiResult(_sourceImage);
+	CRect rect;
+	((CStatic*)GetDlgItem(IDC_PICTURESOURCEIMAGE))->GetWindowRect(rect);
+	ScreenToClient(rect);
+	RedrawWindow(rect);
+	CciratefiApp::ShowMatOnPicture(cifiResult, this, IDC_PICTURESOURCEIMAGE);
 }

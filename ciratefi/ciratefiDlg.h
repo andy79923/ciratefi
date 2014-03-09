@@ -36,4 +36,5 @@ protected:
 public:
 	afx_msg void OnBnClickedButtonLoadSource();
 	afx_msg void OnBnClickedButtonloadtemplate();
+	afx_msg void OnBnClickedButtonMatch();
 };
