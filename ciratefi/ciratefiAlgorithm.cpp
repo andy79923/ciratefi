@@ -34,18 +34,20 @@ namespace Ciratefi
 
 	double CiratefiData::CircularSample(Mat& image, int row, int col, int radius)
 	{ 
-		int row2=0; int col2=radius; double sum=0; double count=0;
+		int row2=0; int col2=radius; int sum=0; int count=0;
+		int r2=radius*radius;
 		while (col2>0) 
 		{
-			sum=sum+image.at<uchar>(ValidImageRange(Point(col+col2, row+row2), image))
-				+image.at<uchar>(ValidImageRange(Point(col-col2, row-row2), image))
-				+image.at<uchar>(ValidImageRange(Point(col-row2, row+col2), image))
-				+image.at<uchar>(ValidImageRange(Point(col+row2, row-col2), image));
+			sum+=*(image.data+image.step[0]*(row+row2)+image.step[1]*(col+col2));
+			sum+=*(image.data+image.step[0]*(row-row2)+image.step[1]*(col-col2));
+			sum+=*(image.data+image.step[0]*(row+col2)+image.step[1]*(col-row2));
+			sum+=*(image.data+image.step[0]*(row-col2)+image.step[1]*(col+row2));
+
 			count=count+4;
 
-			int mh=abs((row2+1)*(row2+1)+col2*col2-radius*radius);
-			int md=abs((row2+1)*(row2+1)+(col2-1)*(col2-1)-radius*radius);
-			int mv=abs(row2*row2+(col2-1)*(col2-1)-radius*radius);
+			int mh=abs((row2+1)*(row2+1)+col2*col2-r2);
+			int md=abs((row2+1)*(row2+1)+(col2-1)*(col2-1)-r2);
+			int mv=abs(row2*row2+(col2-1)*(col2-1)-r2);
 			int m=min(min(mh, md), mv);
 			if (m==mh) row2++;
 			else if (m==md) { row2++; col2--; }
@@ -53,22 +55,33 @@ namespace Ciratefi
 		}
 		if (count>0)
 		{
-			return clip((sum+count/2.0)/count, 0.0, 255.0);
+			return clip(((double)sum+(double)count/2.0)/(double)count, 0.0, 255.0);
 		}
 		return image.at<uchar>(row,col);
 	}
 
 	void CiratefiData::Cisssa(Mat& sourceImage)
 	{
-		_ca.resize(_circleNum*sourceImage.rows*sourceImage.cols);
-		for (int circleNO=_circleNum-1; circleNO>=0; circleNO--) 
+		_ca.resize(_circleNum*sourceImage.rows*sourceImage.cols,-1);
+		int n=sourceImage.rows*sourceImage.cols;
+		double scaleRatio=scale(0);
+		int smallRadius=ceil(scale(0)*_templateRadius);
+		int lastRow=sourceImage.rows-smallRadius;
+		int lastCol=sourceImage.cols-smallRadius;
+
+		for (int circleNO=0; circleNO<_circleNum; circleNO++) 
 		{
+			int cirn=circleNO*n;
 			int radius=round(_circleDistance*circleNO+_initialRadius);
-			for (int row=0; row<sourceImage.rows; row++)
+			for (int row=smallRadius; row<lastRow; row++)
 			{
-				for (int col=0; col<sourceImage.cols; col++) 
+				int rn=row*sourceImage.cols;
+				for (int col=smallRadius; col<lastCol; col++) 
 				{
-					_ca[circleNO*sourceImage.rows*sourceImage.cols+row*sourceImage.cols+col]=CircularSample(sourceImage, row, col, radius);
+					if(row+radius<sourceImage.rows && row-radius>=0 && col+radius<sourceImage.cols && col-radius>=0)
+					{
+						_ca[cirn+rn+col]=CircularSample(sourceImage, row, col, radius);
+					}					
 				}
 			}
 		}
@@ -77,10 +90,7 @@ namespace Ciratefi
 	Mat CiratefiData::quadradaimpar(Mat& image)
 	{
 		int length=min(image.rows,image.cols);
-		if (length%2==0) 
-		{
-			length--;
-		}
+		if (length%2==0) length--;
 		Mat tempRoi = image(Rect((image.cols-1)/2-length/2, (image.rows-1)/2-length/2, length, length));
 		Mat roi(tempRoi.clone());
 		return roi;
@@ -88,53 +98,64 @@ namespace Ciratefi
 
 	void CiratefiData::Cissq(Mat& templateImage)
 	{
-		_cq.resize(_scaleNum*_circleNum);
+		_cq.resize(_scaleNum*_circleNum, 1.0);
+		Mat resizedTemplate;
 		for (int f=0; f<_scaleNum; f++) 
 		{
+			int sn=f*_circleNum;
 			double scaleRatio=scale(f);
-
 			int length=ceil(scaleRatio*templateImage.rows);
-			Mat resizedTemplate(length, length, templateImage.type());
+
 			resize(templateImage, resizedTemplate, Size(length, length));
 			int resizedCircleNum=min((int)floor(scaleRatio/scale(_scaleNum-1)*(double)_circleNum),_circleNum);
+			int templateRowCenter=(resizedTemplate.rows-1)/2;
+			int templateColCenter=(resizedTemplate.cols-1)/2;
 			for (int c=0; c<resizedCircleNum; c++) 
 			{
-				_cq[f*_circleNum+c]=CircularSample(resizedTemplate,(resizedTemplate.rows-1)/2,(resizedTemplate.cols-1)/2,round((double)c*_circleDistance+_initialRadius));
+				_cq[sn+c]=CircularSample(resizedTemplate,templateRowCenter,templateColCenter,round((double)c*_circleDistance+_initialRadius));
 			}
-			for (int c=resizedCircleNum; c<_circleNum; c++) _cq[f*_circleNum+c]=1.0;
 		}
 	}
 
 	void CiratefiData::Cifi(cv::Mat& sourceImage, cv::Mat& templateImage)
 	{
 		vector<vector<double> > cqi(_scaleNum);
-		vector<double> cqi2(_scaleNum);
+		vector<double> cqi2(_scaleNum,0);
 		for (int s=0; s<_scaleNum; s++) 
 		{
 			int resizedCircleNum=_circleNum-1;
-			while (_cq[s*_circleNum+resizedCircleNum]==1.0 && 0<=resizedCircleNum) resizedCircleNum--;
+			int sn=s*_circleNum;
+			while (_cq[sn+resizedCircleNum]==1.0 && 0<=resizedCircleNum) resizedCircleNum--;
 			resizedCircleNum++;
 			if (resizedCircleNum<3) MessageBox(NULL, "Query.mat has a row with less than 3 columns", "Error", MB_ICONERROR | MB_OK);
 			cqi[s].resize(resizedCircleNum);
 			double meanCqi=0;
-			for (int c=0; c<resizedCircleNum; c++) 
+			for(int i=0; i< resizedCircleNum; i++)
 			{
-				cqi[s][c]=_cq[s*_circleNum+c];
-				meanCqi+=cqi[s][c];
+				cqi[s][i]=_cq[sn+i];
+				meanCqi+=cqi[s][i];
+
 			}
 			meanCqi/=(double)resizedCircleNum;
-			cqi2[s]=0;
-			for(vector<double>::iterator i=cqi[s].begin(); i!=cqi[s].end(); i++)
+			for(int i=0;i<resizedCircleNum;i++)
 			{
-				(*i)-=meanCqi;
-				cqi2[s]+=(*i)*(*i);
+				cqi[s][i]-=meanCqi;
+				cqi2[s]+=cqi[s][i]*cqi[s][i];
 			}
 		}
 
 		_cis.clear();
-		for (int row=0; row<sourceImage.rows; row++) 
+		int n=sourceImage.rows*sourceImage.cols;
+		double scaleRatio=scale(0);
+		int smallRadius=ceil(scale(0)*_templateRadius);
+		int lastRow=sourceImage.rows-smallRadius;
+		int lastCol=sourceImage.cols-smallRadius;
+		_cis.reserve(n);
+		vector<double> y;
+		for (int row=smallRadius; row<lastRow; row++) 
 		{
-			for (int col=0; col<sourceImage.cols; col++) 
+			int rn=row*sourceImage.cols;
+			for (int col=smallRadius; col<lastCol; col++) 
 			{
 				double maxCoef=-2;
 				int maxScale=0;
@@ -142,27 +163,33 @@ namespace Ciratefi
 				{
 					vector<double>& x=cqi[s];
 					double x2=cqi2[s];
-					vector<double> y(cqi[s].size());
+					y.resize(cqi[s].size());
 					double meanY=0;
 					double y2=0;
-					for (int k=0; k<y.size(); k++)
+					for (int k=y.size()-1; k>=0; k--)
 					{
-						y[k]=_ca[k*sourceImage.rows*sourceImage.cols+row*sourceImage.cols+col];
+						y[k]=_ca[k*n+rn+col];
+						if(y[k]<0)
+						{
+							meanY=-1;
+							break;
+						}
 						meanY+=y[k];
 					}
+					if(meanY<0) continue;
 					meanY/=(double)y.size();
-					for (int k=0; k<y.size(); k++)
+					for(int i=0;i<y.size();i++)
 					{
-						y[k]-=meanY;
-						y2+=y[k]*y[k];
+						y[i]-=meanY;
+						y2+=y[i]*y[i];
 					}
 
 					double coef=0;
-					for(int i=0;i<x.size();i++)
+					for(int i=0; i<x.size(); i++)
 					{
 						coef+=x[i]*y[i];
 					}
-					coef/=(sqrt(x2)*sqrt(y2));
+					coef/=sqrt(x2*y2);
 					if (_isMatchNegative==true) coef=abs(coef);
 					if (coef>maxCoef) 
 					{
@@ -182,18 +209,17 @@ namespace Ciratefi
 	{
 		Mat cifiResult;
 		cvtColor(sourceImage, cifiResult, CV_GRAY2BGR);
-		for(vector<CorrData>::iterator i=_cis.begin(); i!=_cis.end(); i++)
+		for(int i=0; i<_cis.size(); i++)
 		{
-			int row=i->GetRow();
-			int col=i->GetCol();
+			int row=_cis[i].GetRow();
+			int col=_cis[i].GetCol();
 			if(row>=cifiResult.rows && row<0 && col>=cifiResult.cols && col<0)
 			{
 				MessageBox(NULL, "DrawCifiResult: out of range", "Error", MB_ICONERROR | MB_OK);
 				return Mat();
 			}
-			cifiResult.at<Vec3b>(row, col)[2]=(uchar)(i->GetCoefficient()*255.0);
-		}
-		
+			cifiResult.at<Vec3b>(row, col)=Vec3b((uchar)(_cis[i].GetCoefficient()*255.0),_cis[i].GetScale(), 255);
+		}		
 		return cifiResult;
 	}
 }
