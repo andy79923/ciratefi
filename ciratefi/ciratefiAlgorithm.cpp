@@ -120,33 +120,42 @@ namespace Ciratefi
 	void CiratefiData::Cifi(cv::Mat& sourceImage, cv::Mat& templateImage)
 	{
 		vector<vector<double> > cqi(_scaleNum);
-		vector<double> cqi2(_scaleNum);
+		vector<double> cqi2(_scaleNum,0);
 		for (int s=0; s<_scaleNum; s++) 
 		{
 			int resizedCircleNum=_circleNum-1;
-			while (_cq[s*_circleNum+resizedCircleNum]==1.0 && 0<=resizedCircleNum) resizedCircleNum--;
+			int sn=s*_circleNum;
+			while (_cq[sn+resizedCircleNum]==1.0 && 0<=resizedCircleNum) resizedCircleNum--;
 			resizedCircleNum++;
 			if (resizedCircleNum<3) MessageBox(NULL, "Query.mat has a row with less than 3 columns", "Error", MB_ICONERROR | MB_OK);
 			cqi[s].resize(resizedCircleNum);
 			double meanCqi=0;
-			for (int c=0; c<resizedCircleNum; c++) 
+			for(int i=0; i< resizedCircleNum; i++)
 			{
-				cqi[s][c]=_cq[s*_circleNum+c];
-				meanCqi+=cqi[s][c];
+				cqi[s][i]=_cq[sn+i];
+				meanCqi+=cqi[s][i];
+
 			}
 			meanCqi/=(double)resizedCircleNum;
-			cqi2[s]=0;
-			for(vector<double>::iterator i=cqi[s].begin(); i!=cqi[s].end(); i++)
+			for(int i=0;i<resizedCircleNum;i++)
 			{
-				(*i)-=meanCqi;
-				cqi2[s]+=(*i)*(*i);
+				cqi[s][i]-=meanCqi;
+				cqi2[s]+=cqi[s][i]*cqi[s][i];
 			}
 		}
 
 		_cis.clear();
-		for (int row=0; row<sourceImage.rows; row++) 
+		int n=sourceImage.rows*sourceImage.cols;
+		double scaleRatio=scale(0);
+		int smallRadius=ceil(scale(0)*_templateRadius);
+		int lastRow=sourceImage.rows-smallRadius;
+		int lastCol=sourceImage.cols-smallRadius;
+		_cis.reserve(n);
+		vector<double> y;
+		for (int row=smallRadius; row<lastRow; row++) 
 		{
-			for (int col=0; col<sourceImage.cols; col++) 
+			int rn=row*sourceImage.cols;
+			for (int col=smallRadius; col<lastCol; col++) 
 			{
 				double maxCoef=-2;
 				int maxScale=0;
@@ -154,27 +163,33 @@ namespace Ciratefi
 				{
 					vector<double>& x=cqi[s];
 					double x2=cqi2[s];
-					vector<double> y(cqi[s].size());
+					y.resize(cqi[s].size());
 					double meanY=0;
 					double y2=0;
-					for (int k=0; k<y.size(); k++)
+					for (int k=y.size()-1; k>=0; k--)
 					{
-						y[k]=_ca[k*sourceImage.rows*sourceImage.cols+row*sourceImage.cols+col];
+						y[k]=_ca[k*n+rn+col];
+						if(y[k]<0)
+						{
+							meanY=-1;
+							break;
+						}
 						meanY+=y[k];
 					}
+					if(meanY<0) continue;
 					meanY/=(double)y.size();
-					for (int k=0; k<y.size(); k++)
+					for(int i=0;i<y.size();i++)
 					{
-						y[k]-=meanY;
-						y2+=y[k]*y[k];
+						y[i]-=meanY;
+						y2+=y[i]*y[i];
 					}
 
 					double coef=0;
-					for(int i=0;i<x.size();i++)
+					for(int i=0; i<x.size(); i++)
 					{
 						coef+=x[i]*y[i];
 					}
-					coef/=(sqrt(x2)*sqrt(y2));
+					coef/=sqrt(x2*y2);
 					if (_isMatchNegative==true) coef=abs(coef);
 					if (coef>maxCoef) 
 					{
