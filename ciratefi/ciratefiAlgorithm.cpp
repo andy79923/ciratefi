@@ -34,18 +34,20 @@ namespace Ciratefi
 
 	double CiratefiData::CircularSample(Mat& image, int row, int col, int radius)
 	{ 
-		int row2=0; int col2=radius; double sum=0; double count=0;
+		int row2=0; int col2=radius; int sum=0; int count=0;
+		int r2=radius*radius;
 		while (col2>0) 
 		{
-			sum=sum+image.at<uchar>(ValidImageRange(Point(col+col2, row+row2), image))
-				+image.at<uchar>(ValidImageRange(Point(col-col2, row-row2), image))
-				+image.at<uchar>(ValidImageRange(Point(col-row2, row+col2), image))
-				+image.at<uchar>(ValidImageRange(Point(col+row2, row-col2), image));
+			sum+=*(image.data+image.step[0]*(row+row2)+image.step[1]*(col+col2));
+			sum+=*(image.data+image.step[0]*(row-row2)+image.step[1]*(col-col2));
+			sum+=*(image.data+image.step[0]*(row+col2)+image.step[1]*(col-row2));
+			sum+=*(image.data+image.step[0]*(row-col2)+image.step[1]*(col+row2));
+
 			count=count+4;
 
-			int mh=abs((row2+1)*(row2+1)+col2*col2-radius*radius);
-			int md=abs((row2+1)*(row2+1)+(col2-1)*(col2-1)-radius*radius);
-			int mv=abs(row2*row2+(col2-1)*(col2-1)-radius*radius);
+			int mh=abs((row2+1)*(row2+1)+col2*col2-r2);
+			int md=abs((row2+1)*(row2+1)+(col2-1)*(col2-1)-r2);
+			int mv=abs(row2*row2+(col2-1)*(col2-1)-r2);
 			int m=min(min(mh, md), mv);
 			if (m==mh) row2++;
 			else if (m==md) { row2++; col2--; }
@@ -53,7 +55,7 @@ namespace Ciratefi
 		}
 		if (count>0)
 		{
-			return clip((sum+count/2.0)/count, 0.0, 255.0);
+			return clip(((double)sum+(double)count/2.0)/(double)count, 0.0, 255.0);
 		}
 		return image.at<uchar>(row,col);
 	}
