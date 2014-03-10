@@ -15,10 +15,11 @@
 // 請參閱實作此類別的 ciratefi.cpp
 //
 
-class CciratefiApp : public CWinAppEx
+class CiratefiApp : public CWinAppEx
 {
 public:
-	CciratefiApp();
+	CiratefiApp();
+
 	static void ShowMatOnPicture(cv::Mat& image, CDialog *dlg, int pID);
 
 // 覆寫
@@ -30,4 +31,4 @@ public:
 	DECLARE_MESSAGE_MAP()
 };
 
-extern CciratefiApp theApp;
+extern CiratefiApp theApp;

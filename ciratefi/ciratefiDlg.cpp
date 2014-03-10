@@ -49,31 +49,31 @@ END_MESSAGE_MAP()
 
 
 
-CciratefiDlg::CciratefiDlg(CWnd* pParent /*=NULL*/)
-	: CDialog(CciratefiDlg::IDD, pParent)
+CiratefiDlg::CiratefiDlg(CWnd* pParent /*=NULL*/)
+	: CDialog(CiratefiDlg::IDD, pParent)
 {
 	m_hIcon = AfxGetApp()->LoadIcon(IDR_MAINFRAME);
 }
 
-void CciratefiDlg::DoDataExchange(CDataExchange* pDX)
+void CiratefiDlg::DoDataExchange(CDataExchange* pDX)
 {
 	CDialog::DoDataExchange(pDX);
 }
 
-BEGIN_MESSAGE_MAP(CciratefiDlg, CDialog)
+BEGIN_MESSAGE_MAP(CiratefiDlg, CDialog)
 	ON_WM_SYSCOMMAND()
 	ON_WM_PAINT()
 	ON_WM_QUERYDRAGICON()
 	//}}AFX_MSG_MAP
-	ON_BN_CLICKED(IDC_BUTTONLOADSOURCE, &CciratefiDlg::OnBnClickedButtonLoadSource)
-	ON_BN_CLICKED(IDC_BUTTONLOADTEMPLATE, &CciratefiDlg::OnBnClickedButtonloadtemplate)
-	ON_BN_CLICKED(IDC_BUTTONMATCH, &CciratefiDlg::OnBnClickedButtonMatch)
+	ON_BN_CLICKED(IDC_BUTTONLOADSOURCE, &CiratefiDlg::OnBnClickedButtonLoadSource)
+	ON_BN_CLICKED(IDC_BUTTONLOADTEMPLATE, &CiratefiDlg::OnBnClickedButtonloadtemplate)
+	ON_BN_CLICKED(IDC_BUTTONMATCH, &CiratefiDlg::OnBnClickedButtonMatch)
 END_MESSAGE_MAP()
 
 
 // CciratefiDlg 訊息處理常式
 
-BOOL CciratefiDlg::OnInitDialog()
+BOOL CiratefiDlg::OnInitDialog()
 {
 	CDialog::OnInitDialog();
 
@@ -107,7 +107,7 @@ BOOL CciratefiDlg::OnInitDialog()
 	return TRUE;  // 傳回 TRUE，除非您對控制項設定焦點
 }
 
-void CciratefiDlg::OnSysCommand(UINT nID, LPARAM lParam)
+void CiratefiDlg::OnSysCommand(UINT nID, LPARAM lParam)
 {
 	if ((nID & 0xFFF0) == IDM_ABOUTBOX)
 	{
@@ -124,7 +124,7 @@ void CciratefiDlg::OnSysCommand(UINT nID, LPARAM lParam)
 // 以便繪製圖示。對於使用文件/檢視模式的 MFC 應用程式，
 // 框架會自動完成此作業。
 
-void CciratefiDlg::OnPaint()
+void CiratefiDlg::OnPaint()
 {
 	if (IsIconic())
 	{
@@ -151,13 +151,13 @@ void CciratefiDlg::OnPaint()
 
 // 當使用者拖曳最小化視窗時，
 // 系統呼叫這個功能取得游標顯示。
-HCURSOR CciratefiDlg::OnQueryDragIcon()
+HCURSOR CiratefiDlg::OnQueryDragIcon()
 {
 	return static_cast<HCURSOR>(m_hIcon);
 }
 
 
-void CciratefiDlg::OnBnClickedButtonLoadSource()
+void CiratefiDlg::OnBnClickedButtonLoadSource()
 {
 	// TODO: 在此加入控制項告知處理常式程式碼
 	CFileDialog loadFile(TRUE, "bmp", "*.bmp", OFN_HIDEREADONLY | OFN_OVERWRITEPROMPT, "bmp|*.bmp|*.*|*.*||", this);
@@ -169,11 +169,11 @@ void CciratefiDlg::OnBnClickedButtonLoadSource()
 		((CStatic*)GetDlgItem(IDC_PICTURESOURCEIMAGE))->GetWindowRect(rect);
 		ScreenToClient(rect);
 		RedrawWindow(rect);
-		CciratefiApp::ShowMatOnPicture(_sourceImage, this, IDC_PICTURESOURCEIMAGE);
+		CiratefiApp::ShowMatOnPicture(_sourceImage, this, IDC_PICTURESOURCEIMAGE);
 	}
 }
 
-void CciratefiDlg::OnBnClickedButtonloadtemplate()
+void CiratefiDlg::OnBnClickedButtonloadtemplate()
 {
 	// TODO: 在此加入控制項告知處理常式程式碼
 	CFileDialog loadFile(TRUE, "bmp", "*.bmp", OFN_HIDEREADONLY | OFN_OVERWRITEPROMPT, "bmp|*.bmp|*.*|*.*||", this);
@@ -185,11 +185,11 @@ void CciratefiDlg::OnBnClickedButtonloadtemplate()
 		((CStatic*)GetDlgItem(IDC_PICTURETEMPLATE))->GetWindowRect(rect);
 		ScreenToClient(rect);
 		RedrawWindow(rect);
-		CciratefiApp::ShowMatOnPicture(_templateImage, this, IDC_PICTURETEMPLATE);
+		CiratefiApp::ShowMatOnPicture(_templateImage, this, IDC_PICTURETEMPLATE);
 	}
 }
 
-void CciratefiDlg::OnBnClickedButtonMatch()
+void CiratefiDlg::OnBnClickedButtonMatch()
 {
 	// TODO: 在此加入控制項告知處理常式程式碼
 	_templateImage=_cirateData.quadradaimpar(_templateImage);
@@ -202,5 +202,5 @@ void CciratefiDlg::OnBnClickedButtonMatch()
 	((CStatic*)GetDlgItem(IDC_PICTURESOURCEIMAGE))->GetWindowRect(rect);
 	ScreenToClient(rect);
 	RedrawWindow(rect);
-	CciratefiApp::ShowMatOnPicture(cifiResult, this, IDC_PICTURESOURCEIMAGE);
+	CiratefiApp::ShowMatOnPicture(cifiResult, this, IDC_PICTURESOURCEIMAGE);
 }
