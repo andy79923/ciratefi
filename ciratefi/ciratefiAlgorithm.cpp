@@ -90,10 +90,7 @@ namespace Ciratefi
 	Mat CiratefiData::quadradaimpar(Mat& image)
 	{
 		int length=min(image.rows,image.cols);
-		if (length%2==0) 
-		{
-			length--;
-		}
+		if (length%2==0) length--;
 		Mat tempRoi = image(Rect((image.cols-1)/2-length/2, (image.rows-1)/2-length/2, length, length));
 		Mat roi(tempRoi.clone());
 		return roi;
@@ -101,20 +98,22 @@ namespace Ciratefi
 
 	void CiratefiData::Cissq(Mat& templateImage)
 	{
-		_cq.resize(_scaleNum*_circleNum);
+		_cq.resize(_scaleNum*_circleNum, 1.0);
+		Mat resizedTemplate;
 		for (int f=0; f<_scaleNum; f++) 
 		{
+			int sn=f*_circleNum;
 			double scaleRatio=scale(f);
-
 			int length=ceil(scaleRatio*templateImage.rows);
-			Mat resizedTemplate(length, length, templateImage.type());
+
 			resize(templateImage, resizedTemplate, Size(length, length));
 			int resizedCircleNum=min((int)floor(scaleRatio/scale(_scaleNum-1)*(double)_circleNum),_circleNum);
+			int templateRowCenter=(resizedTemplate.rows-1)/2;
+			int templateColCenter=(resizedTemplate.cols-1)/2;
 			for (int c=0; c<resizedCircleNum; c++) 
 			{
-				_cq[f*_circleNum+c]=CircularSample(resizedTemplate,(resizedTemplate.rows-1)/2,(resizedTemplate.cols-1)/2,round((double)c*_circleDistance+_initialRadius));
+				_cq[sn+c]=CircularSample(resizedTemplate,templateRowCenter,templateColCenter,round((double)c*_circleDistance+_initialRadius));
 			}
-			for (int c=resizedCircleNum; c<_circleNum; c++) _cq[f*_circleNum+c]=1.0;
 		}
 	}
 
