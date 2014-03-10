@@ -209,18 +209,17 @@ namespace Ciratefi
 	{
 		Mat cifiResult;
 		cvtColor(sourceImage, cifiResult, CV_GRAY2BGR);
-		for(vector<CorrData>::iterator i=_cis.begin(); i!=_cis.end(); i++)
+		for(int i=0; i<_cis.size(); i++)
 		{
-			int row=i->GetRow();
-			int col=i->GetCol();
+			int row=_cis[i].GetRow();
+			int col=_cis[i].GetCol();
 			if(row>=cifiResult.rows && row<0 && col>=cifiResult.cols && col<0)
 			{
 				MessageBox(NULL, "DrawCifiResult: out of range", "Error", MB_ICONERROR | MB_OK);
 				return Mat();
 			}
-			cifiResult.at<Vec3b>(row, col)[2]=(uchar)(i->GetCoefficient()*255.0);
-		}
-		
+			cifiResult.at<Vec3b>(row, col)=Vec3b((uchar)(_cis[i].GetCoefficient()*255.0),_cis[i].GetScale(), 255);
+		}		
 		return cifiResult;
 	}
 }
