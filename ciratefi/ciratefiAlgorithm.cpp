@@ -62,15 +62,26 @@ namespace Ciratefi
 
 	void CiratefiData::Cisssa(Mat& sourceImage)
 	{
-		_ca.resize(_circleNum*sourceImage.rows*sourceImage.cols);
-		for (int circleNO=_circleNum-1; circleNO>=0; circleNO--) 
+		_ca.resize(_circleNum*sourceImage.rows*sourceImage.cols,-1);
+		int n=sourceImage.rows*sourceImage.cols;
+		double scaleRatio=scale(0);
+		int smallRadius=ceil(scale(0)*_templateRadius);
+		int lastRow=sourceImage.rows-smallRadius;
+		int lastCol=sourceImage.cols-smallRadius;
+
+		for (int circleNO=0; circleNO<_circleNum; circleNO++) 
 		{
+			int cirn=circleNO*n;
 			int radius=round(_circleDistance*circleNO+_initialRadius);
-			for (int row=0; row<sourceImage.rows; row++)
+			for (int row=smallRadius; row<lastRow; row++)
 			{
-				for (int col=0; col<sourceImage.cols; col++) 
+				int rn=row*sourceImage.cols;
+				for (int col=smallRadius; col<lastCol; col++) 
 				{
-					_ca[circleNO*sourceImage.rows*sourceImage.cols+row*sourceImage.cols+col]=CircularSample(sourceImage, row, col, radius);
+					if(row+radius<sourceImage.rows && row-radius>=0 && col+radius<sourceImage.cols && col-radius>=0)
+					{
+						_ca[cirn+rn+col]=CircularSample(sourceImage, row, col, radius);
+					}					
 				}
 			}
 		}
