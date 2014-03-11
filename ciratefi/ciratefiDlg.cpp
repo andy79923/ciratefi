@@ -198,9 +198,14 @@ void CiratefiDlg::OnBnClickedButtonMatch()
 	_cirateData.Cisssa(_sourceImage);
 	_cirateData.Cifi(_sourceImage,_templateImage);
 	Mat cifiResult=_cirateData.DrawCifiResult(_sourceImage);
+	imwrite("cifi result.bmp", cifiResult);
+
+	_cirateData.Rassq(_templateImage);
+	_cirateData.Rafi(_sourceImage);
+	Mat rifaResult=_cirateData.DrawRafiResult(_sourceImage);
 	CRect rect;
 	((CStatic*)GetDlgItem(IDC_PICTURESOURCEIMAGE))->GetWindowRect(rect);
 	ScreenToClient(rect);
 	RedrawWindow(rect);
-	CiratefiApp::ShowMatOnPicture(cifiResult, this, IDC_PICTURESOURCEIMAGE);
+	CiratefiApp::ShowMatOnPicture(rifaResult, this, IDC_PICTURESOURCEIMAGE);
 }
