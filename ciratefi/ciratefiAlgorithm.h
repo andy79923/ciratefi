@@ -50,6 +50,9 @@ namespace Ciratefi
 		void Cifi(cv::Mat& sourceImage, cv::Mat& templateImage);
 		cv::Mat DrawCifiResult(cv::Mat& sourceImage);
 
+		double RadialSample(cv::Mat& image, int centerX, int centerY, double angle, double radius);
+		void Rassq(cv::Mat& templateImage);
+
 	private:
 		int _scaleNum;
 		double _initialScale;
@@ -81,8 +84,6 @@ namespace Ciratefi
 		val=(val<0.0)?ceil(val-0.5):floor(val+0.5);
 		return val/mul;
 	}
-
-
 }
 
 

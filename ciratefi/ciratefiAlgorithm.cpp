@@ -13,7 +13,7 @@ namespace Ciratefi
 		_AngleRadian = _AngleDegree * M_PI / 180.0;
 		if (_circleNum>1) _circleDistance=(_finalRadius-_initialRadius)/(_circleNum-1); else _circleDistance=0.0;
 		if (_finalRadius<_initialRadius) _finalRadius=scale(_scaleNum-1)*((double)templateImage.rows/2);
-		_templateRadius=(double)templateImage.rows/2;
+		_templateRadius=(templateImage.rows-1)/2;
 		if (_circleNum>1) _circleDistance=(_finalRadius-_initialRadius)/((double)_circleNum-1); else _circleDistance=0.0;
 	}
 
@@ -213,6 +213,54 @@ namespace Ciratefi
 			cifiResult.at<Vec3b>(row, col)=Vec3b((uchar)(_cis[i].GetCoefficient()*255.0),_cis[i].GetScale(), 255);
 		}		
 		return cifiResult;
+	}
+
+	double CiratefiData::RadialSample(Mat& image, int centerX, int centerY, double angle, double radius)
+	{
+		//把圓切成8等份計算
+		int sum=0; int count=0;
+		int x,y,dx,dy,a,err,dx2,dy2,sobe;
+		int x1=centerX; int x2=centerX+round(cos(angle)*radius);
+		int y1=centerY; int y2=centerY-round(sin(angle)*radius);
+		dx=x2-x1; dy=y2-y1;
+
+		if (abs(dx)>=abs(dy))//成立代表位於圓形的1, 4, 5, 8區
+		{ 
+			if (dx<0) 
+			{ swap(x1,x2); swap(y1,y2); dx=-dx; dy=-dy; }
+			a=abs(2*dy); err=0; dx2=dx*2;
+			sobe=(dy==0)?0:((dy>0)?1:-1); y=y1;
+			for (x=x1; x<=x2; x++) 
+			{
+				sum+=*(image.data+y*image.step[0]+x*image.step[1]); count++; err=err+a;
+				if (err>=dx) { y=y+sobe; err=err-dx2; }
+			}
+		} 
+		else//代表位於圓形的2, 3, 6, 7區
+		{
+			if (dy<0) { swap(x1,x2); swap(y1,y2); dx=-dx; dy=-dy; }
+			a=abs(2*dx); err=0; dy2=dy*2;
+			sobe=(dx==0)?0:((dx>0)?1:-1); x=x1;
+			for (y=y1; y<=y2; y++) 
+			{
+				sum+=*(image.data+y*image.step[0]+x*image.step[1]); count++; err=err+a;
+				if (err>=dy) { x=x+sobe; err=err-dy2; }
+			}
+		}
+		if (count>0)
+		{
+			return clip(((double)sum+(double)count/2.0)/(double)count, 0.0, 255.0);
+		}
+		return image.at<uchar>(centerY,centerX);
+	}
+
+	void CiratefiData::Rassq(Mat& templateImage)
+	{
+		_rq.resize(_angleNum);
+		for (int i=0; i<_angleNum; i++)
+		{
+			_rq[i]=(double)RadialSample(templateImage, (templateImage.cols-1)/2, (templateImage.rows-1)/2, _AngleRadian*i,_templateRadius);
+		}
 	}
 }
 
