@@ -40,7 +40,6 @@ namespace Ciratefi
 		void SetInitialRadius(double initialRadius){_initialRadius=initialRadius;}
 		void SetTefiTolerance(int tefiTolerance){_tefiTolerance=tefiTolerance;}
 		
-		double round(double val, int precision);
 		template <class T>
 		T clip(const T val, const T lower, const T upper){return std::max(lower, std::min(val, upper));}
 		cv::Point ValidImageRange(cv::Point& position, cv::Mat& image);
@@ -50,6 +49,11 @@ namespace Ciratefi
 		void Cissq(cv::Mat& templateImage);
 		void Cifi(cv::Mat& sourceImage, cv::Mat& templateImage);
 		cv::Mat DrawCifiResult(cv::Mat& sourceImage);
+
+		double RadialSample(cv::Mat& image, int centerX, int centerY, double angle, double radius);
+		void Rassq(cv::Mat& templateImage);
+		void Rafi(cv::Mat& sourceImage);
+		cv::Mat DrawRafiResult(cv::Mat& sourceImage);
 
 	private:
 		int _scaleNum;
@@ -73,9 +77,16 @@ namespace Ciratefi
 		std::vector<double> _cq;
 		std::vector<double> _rq;
 		std::vector<CorrData> _cis;
+		std::vector<CorrData> _ras;
 	};
 
-
+	inline double round(double val, int precision=0)
+	{
+		double mul=pow(10, (double)precision);
+		val*=mul;
+		val=(val<0.0)?ceil(val-0.5):floor(val+0.5);
+		return val/mul;
+	}
 }
 
 
