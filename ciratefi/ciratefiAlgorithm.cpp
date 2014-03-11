@@ -62,7 +62,7 @@ namespace Ciratefi
 
 	void CiratefiData::Cisssa(Mat& sourceImage)
 	{
-		_ca.resize(_circleNum*sourceImage.rows*sourceImage.cols,-1);
+		_ca.resize(_circleNum*sourceImage.rows*sourceImage.cols,-1.0);
 		int n=sourceImage.rows*sourceImage.cols;
 		double scaleRatio=scale(0);
 		int smallRadius=ceil(scale(0)*_templateRadius);
@@ -98,7 +98,7 @@ namespace Ciratefi
 
 	void CiratefiData::Cissq(Mat& templateImage)
 	{
-		_cq.resize(_scaleNum*_circleNum, 1.0);
+		_cq.resize(_scaleNum*_circleNum, -1.0);
 		Mat resizedTemplate;
 		for (int f=0; f<_scaleNum; f++) 
 		{
@@ -125,7 +125,7 @@ namespace Ciratefi
 		{
 			int resizedCircleNum=_circleNum-1;
 			int sn=s*_circleNum;
-			while (_cq[sn+resizedCircleNum]==1.0 && 0<=resizedCircleNum) resizedCircleNum--;
+			while (_cq[sn+resizedCircleNum]<0.0 && 0<=resizedCircleNum) resizedCircleNum--;
 			resizedCircleNum++;
 			if (resizedCircleNum<3) MessageBox(NULL, "Query.mat has a row with less than 3 columns", "Error", MB_ICONERROR | MB_OK);
 			cqi[s].resize(resizedCircleNum);
@@ -169,7 +169,7 @@ namespace Ciratefi
 					for (int k=y.size()-1; k>=0; k--)
 					{
 						y[k]=_ca[k*n+rn+col];
-						if(y[k]<0)
+						if(y[k]<0.0)
 						{
 							meanY=-1;
 							break;
