@@ -338,5 +338,23 @@ namespace Ciratefi
 			}
 		}
 	}
+
+	Mat CiratefiData::DrawRafiResult(Mat& sourceImage)
+	{
+		Mat rafiResult;
+		cvtColor(sourceImage, rafiResult, CV_GRAY2BGR);
+		for(int i=0; i<_ras.size(); i++)
+		{
+			int row=_ras[i].GetRow();
+			int col=_ras[i].GetCol();
+			if(row>=rafiResult.rows && row<0 && col>=rafiResult.cols && col<0)
+			{
+				MessageBox(NULL, "DrawRafiResult: out of range", "Error", MB_ICONERROR | MB_OK);
+				return Mat();
+			}
+			rafiResult.at<Vec3b>(row, col)=Vec3b((uchar)(_ras[i].GetCoefficient()*255.0),_ras[i].GetAngle(), 255);
+		}		
+		return rafiResult;
+	}
 }
 

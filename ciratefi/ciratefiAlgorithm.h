@@ -53,6 +53,7 @@ namespace Ciratefi
 		double RadialSample(cv::Mat& image, int centerX, int centerY, double angle, double radius);
 		void Rassq(cv::Mat& templateImage);
 		void Rafi(cv::Mat& sourceImage);
+		cv::Mat DrawRafiResult(cv::Mat& sourceImage);
 
 	private:
 		int _scaleNum;
