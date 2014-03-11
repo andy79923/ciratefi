@@ -52,6 +52,7 @@ namespace Ciratefi
 
 		double RadialSample(cv::Mat& image, int centerX, int centerY, double angle, double radius);
 		void Rassq(cv::Mat& templateImage);
+		void Rafi(cv::Mat& sourceImage);
 
 	private:
 		int _scaleNum;
@@ -75,6 +76,7 @@ namespace Ciratefi
 		std::vector<double> _cq;
 		std::vector<double> _rq;
 		std::vector<CorrData> _cis;
+		std::vector<CorrData> _ras;
 	};
 
 	inline double round(double val, int precision=0)

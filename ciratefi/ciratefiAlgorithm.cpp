@@ -262,5 +262,81 @@ namespace Ciratefi
 			_rq[i]=(double)RadialSample(templateImage, (templateImage.cols-1)/2, (templateImage.rows-1)/2, _AngleRadian*i,_templateRadius);
 		}
 	}
+
+	void CiratefiData::Rafi(Mat& sourceImage)
+	{
+		vector<double> x(_angleNum);
+		for (int k=0; k<_angleNum; k++) x[k]=_rq[k];
+		double meanX=0;
+		double x2=0;
+		for(int i=0;i<_angleNum;i++)
+		{
+			meanX+=x[i];
+		}
+		meanX/=_angleNum;
+		for(int i=0;i<_angleNum;i++)
+		{
+			x[i]-=meanX;
+			x2+=x[i]*x[i];
+		}
+
+		_ras.clear();
+		int n=sourceImage.rows*sourceImage.cols;
+		_ras.reserve(sourceImage.rows*sourceImage.cols);
+		vector<double> y(_angleNum);
+		for (int i=0; i<_cis.size(); i++) 
+		{
+			CorrData& candidate=_cis[i];
+
+			double scaleRatio=scale(candidate.GetScale());
+			double angleRange=2.0*M_PI/(double)_angleNum;
+			int row=candidate.GetRow();
+			int col=candidate.GetCol();
+			double maxCoef=-2; int angle=0;
+
+			double meanY=0;
+			for (int s=0; s<_angleNum; s++)
+			{
+				y[s]=RadialSample(sourceImage,col,row,s*angleRange,_templateRadius*scaleRatio);
+				meanY+=y[s];
+
+			}
+			meanY/=(double)_angleNum;
+			double y2=0;
+			for(int i=0; i<_angleNum; i++)
+			{
+				y[i]-=meanY;
+				y2+=y[i]*y[i];
+			}
+
+			double coef=0;
+			for(int i=0; i<x.size(); i++)
+			{
+				coef+=x[i]*y[i];
+			}
+			coef/=sqrt(x2*y2);
+
+			for (int i=0; i<_angleNum; i++) 
+			{
+				double coef=0;
+				for(int i=0; i<_angleNum; i++)
+				{
+					coef+=x[i]*y[i];
+				}
+				coef/=sqrt(x2*y2);
+
+				if (_isMatchNegative) coef=abs(coef);
+				if (coef>maxCoef) 
+				{
+					maxCoef=coef; angle=i;
+				}
+				rotate(x.rbegin(),x.rbegin()+1,x.rend());
+			}
+			if (maxCoef>_angleThreshold) 
+			{
+				_ras.push_back(CorrData(row, col, scaleRatio, angle, maxCoef));
+			}
+		}
+	}
 }
 
