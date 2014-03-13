@@ -16,13 +16,6 @@ namespace Ciratefi
 		if (_circleNum>1) _circleDistance=(_finalRadius-_initialRadius)/(_circleNum-1); else _circleDistance=0.0;
 	}
 
-	Point CiratefiData::ValidImageRange(Point& position, cv::Mat& image)
-	{
-		position.x=(position.x>=image.cols)?image.cols-1:((position.x<0)?0:position.x);
-		position.y=(position.y>=image.rows)?image.rows-1:((position.y<0)?0:position.y);
-		return position;
-	}
-
 	double CiratefiData::CircularSample(Mat& image, int row, int col, int radius)
 	{ 
 		int row2=0; int col2=radius; int sum=0; int count=0;
