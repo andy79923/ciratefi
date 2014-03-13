@@ -100,7 +100,7 @@ namespace Ciratefi
 		}
 	}
 
-	void CiratefiData::Cifi(cv::Mat& sourceImage, cv::Mat& templateImage)
+	void CiratefiData::Cifi(Mat& sourceImage)
 	{
 		vector<vector<double> > cqi(_scaleNum);
 		vector<double> cqi2(_scaleNum,0);
@@ -110,13 +110,13 @@ namespace Ciratefi
 			int sn=s*_circleNum;
 			while (_cq[sn+resizedCircleNum]<0.0 && 0<=resizedCircleNum) resizedCircleNum--;
 			resizedCircleNum++;
-			if (resizedCircleNum<3) MessageBox(NULL, "Query.mat has a row with less than 3 columns", "Error", MB_ICONERROR | MB_OK);
+			if (resizedCircleNum<3) MessageBox(NULL, "There has a resizedTemplate with less than 3 circle", "Error", MB_ICONERROR | MB_OK);
 			cqi[s].resize(resizedCircleNum);
 			double meanCqi=0;
 			for(int i=0; i< resizedCircleNum; i++)
 			{
 				cqi[s][i]=_cq[sn+i];
-				meanCqi+=cqi[s][i];
+				meanCqi+=_cq[sn+i];
 
 			}
 			meanCqi/=(double)resizedCircleNum;
@@ -129,60 +129,59 @@ namespace Ciratefi
 
 		_cis.clear();
 		int n=sourceImage.rows*sourceImage.cols;
-		double scaleRatio=scale(0);
-		int smallRadius=ceil(scale(0)*_templateRadius);
-		int lastRow=sourceImage.rows-smallRadius;
-		int lastCol=sourceImage.cols-smallRadius;
+		int smallestRadius=ceil(scale(0)*_templateRadius);
+		int lastRow=sourceImage.rows-smallestRadius;
+		int lastCol=sourceImage.cols-smallestRadius;
 		_cis.reserve(n);
-		vector<double> y;
-		for (int row=smallRadius; row<lastRow; row++) 
+		vector<double> Y;
+		for (int y=smallestRadius; y<lastRow; y++) 
 		{
-			int rn=row*sourceImage.cols;
-			for (int col=smallRadius; col<lastCol; col++) 
+			int rn=y*sourceImage.cols;
+			for (int x=smallestRadius; x<lastCol; x++) 
 			{
 				double maxCoef=-2;
-				int maxScale=0;
+				int fitScale;
 				for (int s=0; s<_scaleNum; s++) 
 				{
-					vector<double>& x=cqi[s];
-					double x2=cqi2[s];
-					y.resize(cqi[s].size());
+					vector<double>& X=cqi[s];
+					double X2=cqi2[s];
+					Y.resize(cqi[s].size());
 					double meanY=0;
-					double y2=0;
-					for (int k=y.size()-1; k>=0; k--)
+					double Y2=0;
+					for (int i=Y.size()-1; i>=0; i--)
 					{
-						y[k]=_ca[k*n+rn+col];
-						if(y[k]<0.0)
+						Y[i]=_ca[i*n+rn+x];
+						if(Y[i]<0.0)
 						{
 							meanY=-1;
 							break;
 						}
-						meanY+=y[k];
+						meanY+=Y[i];
 					}
 					if(meanY<0) continue;
-					meanY/=(double)y.size();
-					for(int i=0;i<y.size();i++)
+					meanY/=(double)Y.size();
+					for(int i=0;i<Y.size();i++)
 					{
-						y[i]-=meanY;
-						y2+=y[i]*y[i];
+						Y[i]-=meanY;
+						Y2+=Y[i]*Y[i];
 					}
 
 					double coef=0;
-					for(int i=0; i<x.size(); i++)
+					for(int i=0; i<X.size(); i++)
 					{
-						coef+=x[i]*y[i];
+						coef+=X[i]*Y[i];
 					}
-					coef/=sqrt(x2*y2);
+					coef/=sqrt(X2*Y2);
 					if (_isMatchNegative==true) coef=abs(coef);
 					if (coef>maxCoef) 
 					{
 						maxCoef=coef;
-						maxScale=s;
+						fitScale=s;
 					}
 				}
 				if (maxCoef>_scaleThreshold) 
 				{
-					_cis.push_back(CorrData(row, col, maxScale, -1, maxCoef));
+					_cis.push_back(CorrData(y, x, fitScale, -1, maxCoef));
 				}
 			}
 		}

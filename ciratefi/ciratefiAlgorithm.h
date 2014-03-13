@@ -46,7 +46,7 @@ namespace Ciratefi
 		void Cisssa(cv::Mat& sourceImage);
 		cv::Mat quadradaimpar(cv::Mat& image);
 		void Cissq(cv::Mat& templateImage);
-		void Cifi(cv::Mat& sourceImage, cv::Mat& templateImage);
+		void Cifi(cv::Mat& sourceImage);
 		cv::Mat DrawCifiResult(cv::Mat& sourceImage);
 
 		double RadialSample(cv::Mat& image, int centerX, int centerY, double angle, double radius);
