@@ -55,6 +55,7 @@ namespace Ciratefi
 		cv::Mat DrawRafiResult(cv::Mat& sourceImage);
 
 		void CiratefiData::Tefi(cv::Mat& sourceImage, cv::Mat& templateImage);
+		cv::Mat DrawTefiResult(cv::Mat& sourceImage, double sampleRatio=1);
 
 	private:
 		int _scaleNum;

@@ -460,6 +460,34 @@ namespace Ciratefi
 				_tes.push_back(CorrData(y, x, fitScale, fitAngle, maxCoef));
 			}
 		}
+	}
+
+	Mat CiratefiData::DrawTefiResult(Mat& sourceImage, double sampleRatio)
+	{
+		Mat tefiResult;
+		cvtColor(sourceImage, tefiResult, CV_GRAY2BGR);
+		for(int i=0; i<_tes.size(); i++)
+		{
+			int row=_tes[i].GetRow()/sampleRatio;
+			int col=_tes[i].GetCol()/sampleRatio;
+			int scaleNO=_tes[i].GetScale();
+			int angleNO=_tes[i].GetAngle();
+			double scaleRatio=scale(scaleNO);
+			int radius=round(scaleRatio*_templateRadius)/sampleRatio;
+			double angle=angleNO*_angleRadian+M_PI_2;
+			int x1=col; int x2=col+round(cos(angle)*radius);
+			int y1=row; int y2=row-round(sin(angle)*radius);
+
+			if(y2>=tefiResult.rows && y2<0 && x2>=tefiResult.cols && x2<0)
+			{
+				MessageBox(NULL, "DrawRafiResult: out of range", "Error", MB_ICONERROR | MB_OK);
+				return Mat();
+			}
+			//tefiResult.at<Vec3b>(row, col)=Vec3b(0, 0, 255);
+			circle(tefiResult, Point(x1, y1), radius, Scalar(0,0,255),2);
+			line(tefiResult,Point(x1,y1),Point(x2,y2),Scalar(0,0,255),2);
 		}
+		return tefiResult;
+	}
 }
 
