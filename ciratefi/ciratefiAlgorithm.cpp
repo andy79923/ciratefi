@@ -132,7 +132,7 @@ namespace Ciratefi
 		int smallestRadius=ceil(scale(0)*_templateRadius);
 		int lastRow=sourceImage.rows-smallestRadius;
 		int lastCol=sourceImage.cols-smallestRadius;
-		_cis.reserve(n);
+		_cis.reserve((lastRow-smallestRadius)*(lastCol-smallestRadius)*_scaleNum);
 		vector<double> Y;
 		for (int y=smallestRadius; y<lastRow; y++) 
 		{
@@ -271,7 +271,7 @@ namespace Ciratefi
 		}
 
 		_ras.clear();
-		_ras.reserve(_cis.size());
+		_ras.reserve(_cis.size()*_angleNum);
 		vector<double> Y(_angleNum);
 		for (int i=0; i<_cis.size(); i++) 
 		{
@@ -338,5 +338,128 @@ namespace Ciratefi
 		}		
 		return rafiResult;
 	}
+
+	void CiratefiData::Tefi(Mat& sourceImage, Mat& templateImage)
+	{
+		vector< vector<bool> > possibleCheck(_scaleNum*_angleNum);
+		vector< vector<double> > possibleTemplateX(_scaleNum*_angleNum);
+		vector<double> possibleTemplateX2(_scaleNum*_angleNum, -1.0);
+
+		_tes.clear();
+		_tes.reserve(_ras.size()*(4*_tefiTolerance+2*_tefiTolerance+1));//_ras.size()*total scale number*total angle number
+		vector<double> Y;
+		Y.reserve(pow(round(scale(_scaleNum-1)*_templateRadius),2));
+
+		for(int i=0; i<_ras.size(); i++)
+		{
+			CorrData& candidate=_ras[i];
+			int y=candidate.GetRow();
+			int x=candidate.GetCol();
+			double maxCoef=-2;
+			int initialScale=clip(candidate.GetScale()-_tefiTolerance, 0, _scaleNum);
+			int finalScale=clip(candidate.GetScale()+_tefiTolerance, 0, _scaleNum);
+			int initialAngle=candidate.GetAngle()-_tefiTolerance;
+			int finalAngle=candidate.GetAngle()+_tefiTolerance+1;
+			int fitScale=0, fitAngle=0;
+			for(int s=initialScale; s<finalScale;s++)
+			{
+				int sn=s*_angleNum;
+				for(int a=initialAngle; a<finalAngle; a++)
+				{
+					int a2=a%_angleNum;
+					if(a2<0) a2+=_angleNum;
+					double coef=0;
+					double scaleRatio=scale(s);
+					int length=round(scaleRatio*templateImage.rows);
+					int radius=(length-1)/2;
+
+					if(possibleTemplateX2[sn+a2]<0.0)
+					{
+						possibleTemplateX2[sn+a2]=0;
+						double meanX=0;
+						Mat possibleTemplate;
+
+						double angle=a2*_angleDegree;
+						possibleTemplateX[sn+a2].reserve(length*length);
+						possibleCheck[sn+a2].resize(length*length, true);
+						resize(templateImage,possibleTemplate, Size(length, length));
+						Mat affine=getRotationMatrix2D(Point2f(radius, radius), angle, 1.0);
+						warpAffine(possibleTemplate, possibleTemplate, affine, possibleTemplate.size());
+
+						for (int y=0; y<length; y++)
+						{
+							int yn=y*length;
+							for (int x=0; x<length; x++) 
+							{
+								if(round(sqrt(double((x-radius)*(x-radius)+(y-radius)*(y-radius))))<=radius)
+								{
+									possibleTemplateX[sn+a2].push_back(*(possibleTemplate.data+y*possibleTemplate.step[0]+x*possibleTemplate.step[1]));
+									meanX+=possibleTemplateX[sn+a2].back();
+									continue;
+								}
+								*(possibleTemplate.data+y*possibleTemplate.step[0]+x*possibleTemplate.step[1])=0;
+								possibleCheck[sn+a2][yn+x]=false;
+
+							}
+						}
+						meanX/=(double)possibleTemplateX[sn+a2].size();
+						for(int j=0; j<possibleTemplateX[sn+a2].size(); j++)
+						{
+							possibleTemplateX[sn+a2][j]-=meanX;
+							possibleTemplateX2[sn+a2]+=possibleTemplateX[sn+a2][j]*possibleTemplateX[sn+a2][j];
+						}
+					}
+
+					vector<double>& X=possibleTemplateX[sn+a2];
+
+					int c1=x-radius, c2=c1+length;
+					int r1=y-radius, r2=r1+length;
+					double meanY=0;
+					Y.clear();
+					for(int row=r1; row<r2; row++)
+					{
+						int yn=(row-r1)*length;
+						for(int col=c1; col<c2; col++)
+						{
+							if(possibleCheck[sn+a2][yn+col-c1]==true)
+							{
+								Y.push_back(*(sourceImage.data+row*sourceImage.step[0]+col*sourceImage.step[1]));
+								meanY+=Y.back();
+							}
+						}
+					}
+					meanY/=(double)Y.size();
+
+					if(X.size()!=Y.size())
+					{
+						MessageBox(NULL, "Tefi: size is not the same", "Error", MB_ICONERROR | MB_OK);
+					}
+
+					double Y2=0;
+					for(int j=0; j<Y.size(); j++)
+					{
+						Y[j]-=meanY;
+						Y2+=Y[j]*Y[j];
+						coef+=X[j]*Y[j];
+					}
+
+					coef/=sqrt(possibleTemplateX2[sn+a2]*Y2);
+
+
+					if (_isMatchNegative) coef=abs(coef);
+					if (coef>maxCoef) 
+					{
+						maxCoef=coef;
+						fitScale=s;
+						fitAngle=a2;
+					}
+				}
+			}
+			if (maxCoef>_nccThreshold)
+			{
+				_tes.push_back(CorrData(y, x, fitScale, fitAngle, maxCoef));
+			}
+		}
+		}
 }
 
