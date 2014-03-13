@@ -24,7 +24,7 @@ namespace Ciratefi
 	class CiratefiData
 	{
 	public:
-		CiratefiData():_scaleNum(5),_initialScale(0.5),_finalScale(1),_angleNum(36),_scaleThreshold(0.95),_angleThreshold(0.8),_nccThreshold(0.9)
+		CiratefiData():_scaleNum(5),_initialScale(0.5),_finalScale(1.0),_angleNum(36),_scaleThreshold(0.95),_angleThreshold(0.8),_nccThreshold(0.9)
 			,_isMatchNegative(false),_circleNum(16),_initialRadius(0),_finalRadius(-1),_tefiTolerance(1){}
 		void CountParameter(cv::Mat& templateImage);
 		double scale(double s){ return _initialScale*pow(_passoesc,s);}
@@ -42,18 +42,20 @@ namespace Ciratefi
 		
 		template <class T>
 		T clip(const T val, const T lower, const T upper){return std::max(lower, std::min(val, upper));}
-		cv::Point ValidImageRange(cv::Point& position, cv::Mat& image);
-		double CircularSample(cv::Mat& image, int row, int col, int radius);
+		double CircularSample(cv::Mat& image, int y, int x, int radius);
 		void Cisssa(cv::Mat& sourceImage);
 		cv::Mat quadradaimpar(cv::Mat& image);
 		void Cissq(cv::Mat& templateImage);
-		void Cifi(cv::Mat& sourceImage, cv::Mat& templateImage);
+		void Cifi(cv::Mat& sourceImage);
 		cv::Mat DrawCifiResult(cv::Mat& sourceImage);
 
-		double RadialSample(cv::Mat& image, int centerX, int centerY, double angle, double radius);
+		double RadialSample(cv::Mat& image, int centerY, int centerX, double angle, double radius);
 		void Rassq(cv::Mat& templateImage);
 		void Rafi(cv::Mat& sourceImage);
 		cv::Mat DrawRafiResult(cv::Mat& sourceImage);
+
+		void CiratefiData::Tefi(cv::Mat& sourceImage, cv::Mat& templateImage);
+		cv::Mat DrawTefiResult(cv::Mat& sourceImage, double sampleRatio=1);
 
 	private:
 		int _scaleNum;
@@ -70,14 +72,15 @@ namespace Ciratefi
 		int _tefiTolerance;
 		double _circleDistance;
 		double _passoesc;
-		double _AngleDegree;
-		double _AngleRadian;
+		double _angleDegree;
+		double _angleRadian;
 		double _templateRadius;
 		std::vector<double> _ca;
 		std::vector<double> _cq;
 		std::vector<double> _rq;
 		std::vector<CorrData> _cis;
 		std::vector<CorrData> _ras;
+		std::vector<CorrData> _tes;
 	};
 
 	inline double round(double val, int precision=0)
