@@ -16,32 +16,32 @@ namespace Ciratefi
 		if (_circleNum>1) _circleDistance=(_finalRadius-_initialRadius)/(_circleNum-1); else _circleDistance=0.0;
 	}
 
-	double CiratefiData::CircularSample(Mat& image, int row, int col, int radius)
+	double CiratefiData::CircularSample(Mat& image, int y, int x, int radius)
 	{ 
-		int row2=0; int col2=radius; int sum=0; int count=0;
+		int y2=0; int x2=radius; int sum=0; int count=0;
 		int r2=radius*radius;
-		while (col2>0) 
+		while (x2>0) 
 		{
-			sum+=*(image.data+image.step[0]*(row+row2)+image.step[1]*(col+col2));
-			sum+=*(image.data+image.step[0]*(row-row2)+image.step[1]*(col-col2));
-			sum+=*(image.data+image.step[0]*(row+col2)+image.step[1]*(col-row2));
-			sum+=*(image.data+image.step[0]*(row-col2)+image.step[1]*(col+row2));
+			sum+=*(image.data+image.step[0]*(y+y2)+image.step[1]*(x+x2));
+			sum+=*(image.data+image.step[0]*(y-y2)+image.step[1]*(x-x2));
+			sum+=*(image.data+image.step[0]*(y+x2)+image.step[1]*(x-y2));
+			sum+=*(image.data+image.step[0]*(y-x2)+image.step[1]*(x+y2));
 
 			count=count+4;
 
-			int mh=abs((row2+1)*(row2+1)+col2*col2-r2);
-			int md=abs((row2+1)*(row2+1)+(col2-1)*(col2-1)-r2);
-			int mv=abs(row2*row2+(col2-1)*(col2-1)-r2);
+			int mh=abs((y2+1)*(y2+1)+x2*x2-r2);
+			int md=abs((y2+1)*(y2+1)+(x2-1)*(x2-1)-r2);
+			int mv=abs(y2*y2+(x2-1)*(x2-1)-r2);
 			int m=min(min(mh, md), mv);
-			if (m==mh) row2++;
-			else if (m==md) { row2++; col2--; }
-			else col2--;
+			if (m==mh) y2++;
+			else if (m==md) { y2++; x2--; }
+			else x2--;
 		}
 		if (count>0)
 		{
 			return clip(((double)sum+(double)count/2.0)/(double)count, 0.0, 255.0);
 		}
-		return image.at<uchar>(row,col);
+		return *(image.data+y*image.step[0]+x*image.step[1]);
 	}
 
 	void CiratefiData::Cisssa(Mat& sourceImage)

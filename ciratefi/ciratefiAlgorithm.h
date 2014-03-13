@@ -42,7 +42,7 @@ namespace Ciratefi
 		
 		template <class T>
 		T clip(const T val, const T lower, const T upper){return std::max(lower, std::min(val, upper));}
-		double CircularSample(cv::Mat& image, int row, int col, int radius);
+		double CircularSample(cv::Mat& image, int y, int x, int radius);
 		void Cisssa(cv::Mat& sourceImage);
 		cv::Mat quadradaimpar(cv::Mat& image);
 		void Cissq(cv::Mat& templateImage);
