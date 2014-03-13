@@ -205,7 +205,7 @@ namespace Ciratefi
 		return cifiResult;
 	}
 
-	double CiratefiData::RadialSample(Mat& image, int centerX, int centerY, double angle, double radius)
+	double CiratefiData::RadialSample(Mat& image, int centerY, int centerX, double angle, double radius)
 	{
 		//把圓切成8等份計算
 		int sum=0; int count=0;
@@ -241,15 +241,15 @@ namespace Ciratefi
 		{
 			return clip(((double)sum+(double)count/2.0)/(double)count, 0.0, 255.0);
 		}
-		return image.at<uchar>(centerY,centerX);
+		return *(image.data+centerY*image.step[0]+centerX*image.step[1]);
 	}
 
 	void CiratefiData::Rassq(Mat& templateImage)
 	{
 		_rq.resize(_angleNum);
-		for (int i=0; i<_angleNum; i++)
+		for (int a=0; a<_angleNum; a++)
 		{
-			_rq[i]=(double)RadialSample(templateImage, (templateImage.cols-1)/2, (templateImage.rows-1)/2, _angleRadian*i,_templateRadius);
+			_rq[a]=RadialSample(templateImage, _templateRadius, _templateRadius, _angleRadian*a,_templateRadius);
 		}
 	}
 
