@@ -9,12 +9,11 @@ namespace Ciratefi
 	void CiratefiData::CountParameter(Mat& templateImage)
 	{
 		if (_scaleNum>1) _passoesc=exp(log(_finalScale/_initialScale)/_scaleNum); else _passoesc=1.0;
-		_AngleDegree=360.0/_angleNum;
-		_AngleRadian = _AngleDegree * M_PI / 180.0;
+		_angleDegree=360.0/_angleNum;
+		_angleRadian = _angleDegree * M_PI / 180.0;
+		_finalRadius=scale(_scaleNum-1)*(templateImage.rows/2);
+		_templateRadius=templateImage.rows/2;
 		if (_circleNum>1) _circleDistance=(_finalRadius-_initialRadius)/(_circleNum-1); else _circleDistance=0.0;
-		if (_finalRadius<_initialRadius) _finalRadius=scale(_scaleNum-1)*((double)templateImage.rows/2);
-		_templateRadius=(templateImage.rows-1)/2;
-		if (_circleNum>1) _circleDistance=(_finalRadius-_initialRadius)/((double)_circleNum-1); else _circleDistance=0.0;
 	}
 
 	Point CiratefiData::ValidImageRange(Point& position, cv::Mat& image)
@@ -259,7 +258,7 @@ namespace Ciratefi
 		_rq.resize(_angleNum);
 		for (int i=0; i<_angleNum; i++)
 		{
-			_rq[i]=(double)RadialSample(templateImage, (templateImage.cols-1)/2, (templateImage.rows-1)/2, _AngleRadian*i,_templateRadius);
+			_rq[i]=(double)RadialSample(templateImage, (templateImage.cols-1)/2, (templateImage.rows-1)/2, _angleRadian*i,_templateRadius);
 		}
 	}
 

@@ -70,8 +70,8 @@ namespace Ciratefi
 		int _tefiTolerance;
 		double _circleDistance;
 		double _passoesc;
-		double _AngleDegree;
-		double _AngleRadian;
+		double _angleDegree;
+		double _angleRadian;
 		double _templateRadius;
 		std::vector<double> _ca;
 		std::vector<double> _cq;
