@@ -48,23 +48,22 @@ namespace Ciratefi
 	{
 		_ca.resize(_circleNum*sourceImage.rows*sourceImage.cols,-1.0);
 		int n=sourceImage.rows*sourceImage.cols;
-		double scaleRatio=scale(0);
-		int smallRadius=ceil(scale(0)*_templateRadius);
-		int lastRow=sourceImage.rows-smallRadius;
-		int lastCol=sourceImage.cols-smallRadius;
+		int smallestRadius=ceil(scale(0)*_templateRadius);
+		int lastRow=sourceImage.rows-smallestRadius;
+		int lastCol=sourceImage.cols-smallestRadius;
 
-		for (int circleNO=0; circleNO<_circleNum; circleNO++) 
+		for (int s=0; s<_circleNum; s++) 
 		{
-			int cirn=circleNO*n;
-			int radius=round(_circleDistance*circleNO+_initialRadius);
-			for (int row=smallRadius; row<lastRow; row++)
+			int sn=s*n;
+			int radius=round(_circleDistance*s+_initialRadius);
+			for (int y=smallestRadius; y<lastRow; y++)
 			{
-				int rn=row*sourceImage.cols;
-				for (int col=smallRadius; col<lastCol; col++) 
+				int rn=y*sourceImage.cols;
+				for (int x=smallestRadius; x<lastCol; x++) 
 				{
-					if(row+radius<sourceImage.rows && row-radius>=0 && col+radius<sourceImage.cols && col-radius>=0)
+					if(y+radius<sourceImage.rows && y-radius>=0 && x+radius<sourceImage.cols && x-radius>=0)
 					{
-						_ca[cirn+rn+col]=CircularSample(sourceImage, row, col, radius);
+						_ca[sn+rn+x]=CircularSample(sourceImage, y, x, radius);
 					}					
 				}
 			}
