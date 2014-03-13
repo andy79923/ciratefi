@@ -90,7 +90,7 @@ namespace Ciratefi
 			int length=ceil(scale(s)*templateImage.rows);
 
 			resize(templateImage, resizedTemplate, Size(length, length));
-			int resizedCircleNum=min((int)floor(scaleRatio/scale(_scaleNum-1))*_circleNum,_circleNum);
+			int resizedCircleNum=min((int)floor(scaleRatio/scale(_scaleNum-1)*_circleNum),_circleNum);
 			int templateRowCenter=(resizedTemplate.rows-1)/2;
 			int templateColCenter=(resizedTemplate.cols-1)/2;
 			for (int c=0; c<resizedCircleNum; c++) 
