@@ -49,7 +49,7 @@ namespace Ciratefi
 		void Cifi(cv::Mat& sourceImage);
 		cv::Mat DrawCifiResult(cv::Mat& sourceImage);
 
-		double RadialSample(cv::Mat& image, int centerX, int centerY, double angle, double radius);
+		double RadialSample(cv::Mat& image, int centerY, int centerX, double angle, double radius);
 		void Rassq(cv::Mat& templateImage);
 		void Rafi(cv::Mat& sourceImage);
 		cv::Mat DrawRafiResult(cv::Mat& sourceImage);

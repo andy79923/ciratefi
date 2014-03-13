@@ -255,76 +255,68 @@ namespace Ciratefi
 
 	void CiratefiData::Rafi(Mat& sourceImage)
 	{
-		vector<double> x(_angleNum);
-		for (int k=0; k<_angleNum; k++) x[k]=_rq[k];
+		vector<double> X(_angleNum);
+		for(int i=0; i<_angleNum; i++) X[i]=_rq[i];
 		double meanX=0;
-		double x2=0;
+		double X2=0;
 		for(int i=0;i<_angleNum;i++)
 		{
-			meanX+=x[i];
+			meanX+=X[i];
 		}
-		meanX/=_angleNum;
+		meanX/=(double)_angleNum;
 		for(int i=0;i<_angleNum;i++)
 		{
-			x[i]-=meanX;
-			x2+=x[i]*x[i];
+			X[i]-=meanX;
+			X2+=X[i]*X[i];
 		}
 
 		_ras.clear();
-		int n=sourceImage.rows*sourceImage.cols;
-		_ras.reserve(sourceImage.rows*sourceImage.cols);
-		vector<double> y(_angleNum);
+		_ras.reserve(_cis.size());
+		vector<double> Y(_angleNum);
 		for (int i=0; i<_cis.size(); i++) 
 		{
 			CorrData& candidate=_cis[i];
 
 			double scaleRatio=scale(candidate.GetScale());
-			double angleRange=2.0*M_PI/(double)_angleNum;
-			int row=candidate.GetRow();
-			int col=candidate.GetCol();
-			double maxCoef=-2; int angle=0;
+			double angleRange=2.0*M_PI/_angleNum;
+			int y=candidate.GetRow();
+			int x=candidate.GetCol();
+			double maxCoef=-2; int fitAngle=0;
 
 			double meanY=0;
-			for (int s=0; s<_angleNum; s++)
+			for (int a=0; a<_angleNum; a++)
 			{
-				y[s]=RadialSample(sourceImage,col,row,s*angleRange,_templateRadius*scaleRatio);
-				meanY+=y[s];
+				Y[a]=RadialSample(sourceImage, y, x, a*angleRange, _templateRadius*scaleRatio);
+				meanY+=Y[a];
 
 			}
 			meanY/=(double)_angleNum;
-			double y2=0;
-			for(int i=0; i<_angleNum; i++)
+			double Y2=0;
+			for(int a=0; a<_angleNum; a++)
 			{
-				y[i]-=meanY;
-				y2+=y[i]*y[i];
+				Y[a]-=meanY;
+				Y2+=Y[a]*Y[a];
 			}
 
-			double coef=0;
-			for(int i=0; i<x.size(); i++)
-			{
-				coef+=x[i]*y[i];
-			}
-			coef/=sqrt(x2*y2);
-
-			for (int i=0; i<_angleNum; i++) 
+			for (int j=0; j<_angleNum; j++) 
 			{
 				double coef=0;
-				for(int i=0; i<_angleNum; i++)
+				for(int k=0; k<_angleNum; k++)
 				{
-					coef+=x[i]*y[i];
+					coef+=X[k]*Y[k];
 				}
-				coef/=sqrt(x2*y2);
+				coef/=sqrt(X2*Y2);
 
 				if (_isMatchNegative) coef=abs(coef);
 				if (coef>maxCoef) 
 				{
-					maxCoef=coef; angle=i;
+					maxCoef=coef; fitAngle=j;
 				}
-				rotate(x.rbegin(),x.rbegin()+1,x.rend());
+				rotate(X.rbegin(),X.rbegin()+1,X.rend());
 			}
 			if (maxCoef>_angleThreshold) 
 			{
-				_ras.push_back(CorrData(row, col, scaleRatio, angle, maxCoef));
+				_ras.push_back(CorrData(y, x, candidate.GetScale(), fitAngle, maxCoef));
 			}
 		}
 	}
