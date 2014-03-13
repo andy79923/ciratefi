@@ -83,19 +83,19 @@ namespace Ciratefi
 	{
 		_cq.resize(_scaleNum*_circleNum, -1.0);
 		Mat resizedTemplate;
-		for (int f=0; f<_scaleNum; f++) 
+		for (int s=0; s<_scaleNum; s++) 
 		{
-			int sn=f*_circleNum;
-			double scaleRatio=scale(f);
-			int length=ceil(scaleRatio*templateImage.rows);
+			int sn=s*_circleNum;
+			double scaleRatio=scale(s);
+			int length=ceil(scale(s)*templateImage.rows);
 
 			resize(templateImage, resizedTemplate, Size(length, length));
-			int resizedCircleNum=min((int)floor(scaleRatio/scale(_scaleNum-1)*(double)_circleNum),_circleNum);
+			int resizedCircleNum=min((int)floor(scaleRatio/scale(_scaleNum-1))*_circleNum,_circleNum);
 			int templateRowCenter=(resizedTemplate.rows-1)/2;
 			int templateColCenter=(resizedTemplate.cols-1)/2;
 			for (int c=0; c<resizedCircleNum; c++) 
 			{
-				_cq[sn+c]=CircularSample(resizedTemplate,templateRowCenter,templateColCenter,round((double)c*_circleDistance+_initialRadius));
+				_cq[sn+c]=CircularSample(resizedTemplate,templateRowCenter,templateColCenter,round(c*_circleDistance+_initialRadius));
 			}
 		}
 	}
