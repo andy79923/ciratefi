@@ -7,6 +7,7 @@
 #include "ciratefiDlg.h"
 
 using namespace cv;
+using namespace std;
 
 #ifdef _DEBUG
 #define new DEBUG_NEW
@@ -165,6 +166,9 @@ void CiratefiDlg::OnBnClickedButtonLoadSource()
 	if(loadFile.DoModal() == IDOK)
 	{
 		_sourceImage=imread((LPCTSTR)loadFile.GetPathName(), CV_LOAD_IMAGE_GRAYSCALE);
+		stringstream resolution;
+		resolution<<_sourceImage.cols<<"X"<<_sourceImage.rows;
+		((CStatic*)GetDlgItem(IDC_SOURCERESOLUTION))->SetWindowText(resolution.str().c_str());
 		CRect rect;
 		((CStatic*)GetDlgItem(IDC_PICTURESOURCEIMAGE))->GetWindowRect(rect);
 		ScreenToClient(rect);
@@ -181,6 +185,9 @@ void CiratefiDlg::OnBnClickedButtonloadtemplate()
 	if(loadFile.DoModal() == IDOK)
 	{
 		_templateImage=imread((LPCTSTR)loadFile.GetPathName(), CV_LOAD_IMAGE_GRAYSCALE);
+		stringstream resolution;
+		resolution<<_templateImage.cols<<"X"<<_templateImage.rows;
+		((CStatic*)GetDlgItem(IDC_TEMPLATERESOLUTION))->SetWindowText(resolution.str().c_str());
 		CRect rect;
 		((CStatic*)GetDlgItem(IDC_PICTURETEMPLATE))->GetWindowRect(rect);
 		ScreenToClient(rect);
@@ -198,7 +205,7 @@ void CiratefiDlg::OnBnClickedButtonMatch()
 	_cirateData.Cisssa(_sourceImage);
 	_cirateData.Cifi(_sourceImage,_templateImage);
 	Mat cifiResult=_cirateData.DrawCifiResult(_sourceImage);
-	imwrite("cifi result.bmp", cifiResult);
+	//imwrite("cifi result.bmp", cifiResult);
 
 	_cirateData.Rassq(_templateImage);
 	_cirateData.Rafi(_sourceImage);
