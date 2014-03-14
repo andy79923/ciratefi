@@ -24,7 +24,7 @@ namespace Ciratefi
 	class CiratefiData
 	{
 	public:
-		CiratefiData():_scaleNum(5),_initialScale(0.5),_finalScale(1.0),_angleNum(36),_scaleThreshold(0.95),_angleThreshold(0.8),_nccThreshold(0.9)
+		CiratefiData():_scaleNum(11),_initialScale(0.5),_finalScale(1.5),_angleNum(60),_scaleThreshold(0.95),_angleThreshold(0.8),_nccThreshold(0.9)
 			,_isMatchNegative(false),_circleNum(16),_initialRadius(0),_finalRadius(-1),_tefiTolerance(1){}
 		void CountParameter(cv::Mat& templateImage);
 		double scale(double s){ return _initialScale*pow(_passoesc,s);}
