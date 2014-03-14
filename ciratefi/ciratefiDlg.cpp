@@ -200,13 +200,29 @@ void CiratefiDlg::OnBnClickedButtonMatch()
 {
 	// TODO: 在此加入控制項告知處理常式程式碼
 	_templateImage=_cirateData.quadradaimpar(_templateImage);
+	stringstream processTime;
+	time_t start;
 	_cirateData.CountParameter(_templateImage);
 	_cirateData.Cissq(_templateImage);
+	start=clock();
 	_cirateData.Cisssa(_sourceImage);
+	processTime<<"Cissa:\t"<<(clock()-start)*1000/CLK_TCK<<"\tms"<<endl;
+
+	start=clock();
 	_cirateData.Cifi(_sourceImage);
+	processTime<<"Cifi:\t"<<(clock()-start)*1000/CLK_TCK<<"\tms"<<endl;
+
+
 	_cirateData.Rassq(_templateImage);
+	start=clock();
 	_cirateData.Rafi(_sourceImage);
+	processTime<<"Rafi:\t"<<(clock()-start)*1000/CLK_TCK<<"\tms"<<endl;
+
+	start=clock();
 	_cirateData.Tefi(_sourceImage, _templateImage);
+	processTime<<"Tefi:\t"<<(clock()-start)*1000/CLK_TCK<<"\tms"<<endl;
+
+	((CStatic*)GetDlgItem(IDC_PROCESSTIME))->SetWindowText(processTime.str().c_str());
 	Mat tefiResult=_cirateData.DrawTefiResult(_sourceImage);
 	CRect rect;
 	((CStatic*)GetDlgItem(IDC_PICTURESOURCEIMAGE))->GetWindowRect(rect);
