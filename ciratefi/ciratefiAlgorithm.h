@@ -25,7 +25,7 @@ namespace Ciratefi
 	{
 	public:
 		CiratefiData():_scaleNum(5),_initialScale(0.5),_finalScale(1.0),_angleNum(36),_scaleThreshold(0.95),_angleThreshold(0.8),_nccThreshold(0.9)
-			,_isMatchNegative(false),_circleNum(16),_initialRadius(0),_finalRadius(-1),_tefiTolerance(1){}
+			,_isMatchNegative(false),_circleNum(16),_tefiTolerance(1){}
 		void CountParameter(cv::Mat& templateImage);
 		void SetScaleNum(int scaleNum){_scaleNum=scaleNum;}
 		void SetInitialScale(double initialScale){_initialScale=initialScale;}
@@ -36,7 +36,6 @@ namespace Ciratefi
 		void SetNccThreshold(double nccThreshold){_nccThreshold=nccThreshold;}
 		void SetMatchNegative(bool isMatchNegative){_isMatchNegative=isMatchNegative;}
 		void SetCircleNum(int circleNum){_circleNum=circleNum;}
-		void SetInitialRadius(double initialRadius){_initialRadius=initialRadius;}
 		void SetTefiTolerance(int tefiTolerance){_tefiTolerance=tefiTolerance;}
 		
 		template <class T>
@@ -68,8 +67,6 @@ namespace Ciratefi
 		double _nccThreshold;
 		bool _isMatchNegative;
 		int _circleNum;
-		double _initialRadius;
-		double _finalRadius;
 		int _tefiTolerance;
 		double _circleDistance;
 		double _scaleDistance;

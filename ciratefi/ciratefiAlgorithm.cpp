@@ -11,9 +11,8 @@ namespace Ciratefi
 		if (_scaleNum>1) _scaleDistance=(_finalScale-_initialScale)/(_scaleNum-1); else _scaleDistance=0.0;
 		_angleDegree=360.0/_angleNum;
 		_angleRadian = _angleDegree * M_PI / 180.0;
-		_finalRadius=ScaleFactor(_scaleNum-1)*(templateImage.rows/2);
 		_templateRadius=templateImage.rows/2;
-		if (_circleNum>1) _circleDistance=(_finalRadius-_initialRadius)/(_circleNum-1); else _circleDistance=0.0;
+		if (_circleNum>1) _circleDistance=ScaleFactor(_scaleNum-1)*(templateImage.rows/2)/(_circleNum-1); else _circleDistance=0.0;
 		_minTefiPixel=templateImage.rows/2;
 	}
 
@@ -56,7 +55,7 @@ namespace Ciratefi
 		for (int s=0; s<_circleNum; s++) 
 		{
 			int sn=s*n;
-			int radius=round(_circleDistance*s+_initialRadius);
+			int radius=round(_circleDistance*s);
 			for (int y=smallestRadius; y<lastRow; y++)
 			{
 				int rn=y*sourceImage.cols;
@@ -96,7 +95,7 @@ namespace Ciratefi
 			int templateColCenter=(resizedTemplate.cols-1)/2;
 			for (int c=0; c<resizedCircleNum; c++) 
 			{
-				_cq[sn+c]=CircularSample(resizedTemplate,templateRowCenter,templateColCenter,round(c*_circleDistance+_initialRadius));
+				_cq[sn+c]=CircularSample(resizedTemplate,templateRowCenter,templateColCenter,round(c*_circleDistance));
 			}
 		}
 	}
