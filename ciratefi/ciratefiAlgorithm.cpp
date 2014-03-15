@@ -8,10 +8,10 @@ namespace Ciratefi
 {
 	void CiratefiData::CountParameter(Mat& templateImage)
 	{
-		if (_scaleNum>1) _passoesc=exp(log(_finalScale/_initialScale)/_scaleNum); else _passoesc=1.0;
+		if (_scaleNum>1) _scaleDistance=(_finalScale-_initialScale)/(_scaleNum-1); else _scaleDistance=0.0;
 		_angleDegree=360.0/_angleNum;
 		_angleRadian = _angleDegree * M_PI / 180.0;
-		_finalRadius=scale(_scaleNum-1)*(templateImage.rows/2);
+		_finalRadius=ScaleFactor(_scaleNum-1)*(templateImage.rows/2);
 		_templateRadius=templateImage.rows/2;
 		if (_circleNum>1) _circleDistance=(_finalRadius-_initialRadius)/(_circleNum-1); else _circleDistance=0.0;
 	}
@@ -48,7 +48,7 @@ namespace Ciratefi
 	{
 		_ca.resize(_circleNum*sourceImage.rows*sourceImage.cols,-1.0);
 		int n=sourceImage.rows*sourceImage.cols;
-		int smallestRadius=ceil(scale(0)*_templateRadius);
+		int smallestRadius=ceil(ScaleFactor(0)*_templateRadius);
 		int lastRow=sourceImage.rows-smallestRadius;
 		int lastCol=sourceImage.cols-smallestRadius;
 
@@ -86,11 +86,11 @@ namespace Ciratefi
 		for (int s=0; s<_scaleNum; s++) 
 		{
 			int sn=s*_circleNum;
-			double scaleRatio=scale(s);
-			int length=ceil(scale(s)*templateImage.rows);
+			double scaleRatio=ScaleFactor(s);
+			int length=ceil(ScaleFactor(s)*templateImage.rows);
 
 			resize(templateImage, resizedTemplate, Size(length, length));
-			int resizedCircleNum=min((int)floor(scaleRatio/scale(_scaleNum-1)*_circleNum),_circleNum);
+			int resizedCircleNum=min((int)floor(scaleRatio/ScaleFactor(_scaleNum-1)*_circleNum),_circleNum);
 			int templateRowCenter=(resizedTemplate.rows-1)/2;
 			int templateColCenter=(resizedTemplate.cols-1)/2;
 			for (int c=0; c<resizedCircleNum; c++) 
@@ -129,7 +129,7 @@ namespace Ciratefi
 
 		_cis.clear();
 		int n=sourceImage.rows*sourceImage.cols;
-		int smallestRadius=ceil(scale(0)*_templateRadius);
+		int smallestRadius=ceil(ScaleFactor(0)*_templateRadius);
 		int lastRow=sourceImage.rows-smallestRadius;
 		int lastCol=sourceImage.cols-smallestRadius;
 		_cis.reserve((lastRow-smallestRadius)*(lastCol-smallestRadius)*_scaleNum);
@@ -277,7 +277,7 @@ namespace Ciratefi
 		{
 			CorrData& candidate=_cis[i];
 
-			double scaleRatio=scale(candidate.GetScale());
+			double scaleRatio=ScaleFactor(candidate.GetScale());
 			double angleRange=2.0*M_PI/_angleNum;
 			int y=candidate.GetRow();
 			int x=candidate.GetCol();
@@ -348,7 +348,7 @@ namespace Ciratefi
 		_tes.clear();
 		_tes.reserve(_ras.size()*(4*_tefiTolerance+2*_tefiTolerance+1));//_ras.size()*total scale number*total angle number
 		vector<double> Y;
-		Y.reserve(pow(round(scale(_scaleNum-1)*_templateRadius),2));
+		Y.reserve(pow(round(ScaleFactor(_scaleNum-1)*_templateRadius),2));
 
 		for(int i=0; i<_ras.size(); i++)
 		{
@@ -369,7 +369,7 @@ namespace Ciratefi
 					int a2=a%_angleNum;
 					if(a2<0) a2+=_angleNum;
 					double coef=0;
-					double scaleRatio=scale(s);
+					double scaleRatio=ScaleFactor(s);
 					int length=round(scaleRatio*templateImage.rows);
 					int radius=(length-1)/2;
 
@@ -472,7 +472,7 @@ namespace Ciratefi
 			int col=_tes[i].GetCol()/sampleRatio;
 			int scaleNO=_tes[i].GetScale();
 			int angleNO=_tes[i].GetAngle();
-			double scaleRatio=scale(scaleNO);
+			double scaleRatio=ScaleFactor(scaleNO);
 			int radius=round(scaleRatio*_templateRadius)/sampleRatio;
 			double angle=angleNO*_angleRadian+M_PI_2;
 			int x1=col; int x2=col+round(cos(angle)*radius);
