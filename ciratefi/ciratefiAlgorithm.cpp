@@ -14,6 +14,7 @@ namespace Ciratefi
 		_finalRadius=ScaleFactor(_scaleNum-1)*(templateImage.rows/2);
 		_templateRadius=templateImage.rows/2;
 		if (_circleNum>1) _circleDistance=(_finalRadius-_initialRadius)/(_circleNum-1); else _circleDistance=0.0;
+		_minTefiPixel=templateImage.rows/2;
 	}
 
 	double CiratefiData::CircularSample(Mat& image, int y, int x, int radius)
@@ -457,7 +458,26 @@ namespace Ciratefi
 			}
 			if (maxCoef>_nccThreshold)
 			{
-				_tes.push_back(CorrData(y, x, fitScale, fitAngle, maxCoef));
+				bool isAdd=true;
+				for(int j=0; j<_tes.size(); j++)
+				{
+					int x1=_tes[j].GetCol();
+					int y1=_tes[j].GetRow();
+					if(round(sqrt((double)((x-x1)*(x-x1)+(y-y1)*(y-y1))))<=_minTefiPixel)
+					{
+						if(_tes[j].GetCoefficient()<maxCoef)
+						{
+							_tes[j]=CorrData(y, x, fitScale, fitAngle, maxCoef);
+						}
+						isAdd=false;
+						break;
+
+					}
+				}
+				if(isAdd==true)
+				{
+					_tes.push_back(CorrData(y, x, fitScale, fitAngle, maxCoef));
+				}
 			}
 		}
 	}

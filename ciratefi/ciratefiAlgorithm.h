@@ -76,6 +76,7 @@ namespace Ciratefi
 		double _angleDegree;
 		double _angleRadian;
 		double _templateRadius;
+		int _minTefiPixel;
 		std::vector<double> _ca;
 		std::vector<double> _cq;
 		std::vector<double> _rq;
