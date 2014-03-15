@@ -12,8 +12,8 @@ namespace Ciratefi
 		_angleDegree=360.0/_angleNum;
 		_angleRadian = _angleDegree * M_PI / 180.0;
 		_templateRadius=templateImage.rows/2;
-		if (_circleNum>1) _circleDistance=ScaleFactor(_scaleNum-1)*(templateImage.rows/2)/(_circleNum-1); else _circleDistance=0.0;
-		_minTefiPixel=templateImage.rows/2;
+		if (_circleNum>1) _circleDistance=ScaleFactor(_scaleNum-1)*_templateRadius/(_circleNum-1); else _circleDistance=0.0;
+		_minTefiPixel=_templateRadius;
 	}
 
 	double CiratefiData::CircularSample(Mat& image, int y, int x, int radius)
