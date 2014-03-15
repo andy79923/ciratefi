@@ -39,32 +39,35 @@ namespace Ciratefi
 		}
 		if (count>0)
 		{
-			return clip(((double)sum+(double)count/2.0)/(double)count, 0.0, 255.0);
+			return clip((sum+count/2.0)/count, 0.0, 255.0);
 		}
 		return *(image.data+y*image.step[0]+x*image.step[1]);
 	}
 
-	void CiratefiData::Cisssa(Mat& sourceImage)
+	void CiratefiData::Cisssa(Mat& sourceImage) 
 	{
 		_ca.resize(_circleNum*sourceImage.rows*sourceImage.cols,-1.0);
 		int n=sourceImage.rows*sourceImage.cols;
-		int smallestRadius=ceil(ScaleFactor(0)*_templateRadius);
+		int smallestRadius=round(ScaleFactor(0)*_templateRadius);
 		int lastRow=sourceImage.rows-smallestRadius;
 		int lastCol=sourceImage.cols-smallestRadius;
 
-		for (int s=0; s<_circleNum; s++) 
+		for (int c=0; c<_circleNum; c++) 
 		{
-			int sn=s*n;
-			int radius=round(_circleDistance*s);
+			int cn=c*n;
+			int circleRadius=round(_circleDistance*c);
 			for (int y=smallestRadius; y<lastRow; y++)
 			{
-				int rn=y*sourceImage.cols;
-				for (int x=smallestRadius; x<lastCol; x++) 
+				if(y+circleRadius<sourceImage.rows && y-circleRadius>=0)
 				{
-					if(y+radius<sourceImage.rows && y-radius>=0 && x+radius<sourceImage.cols && x-radius>=0)
+					int rn=y*sourceImage.cols;
+					for (int x=smallestRadius; x<lastCol; x++) 
 					{
-						_ca[sn+rn+x]=CircularSample(sourceImage, y, x, radius);
-					}					
+						if(x+circleRadius<sourceImage.cols && x-circleRadius>=0)
+						{
+							_ca[cn+rn+x]=CircularSample(sourceImage, y, x, circleRadius);
+						}					
+					}
 				}
 			}
 		}
@@ -87,10 +90,10 @@ namespace Ciratefi
 		{
 			int sn=s*_circleNum;
 			double scaleRatio=ScaleFactor(s);
-			int length=ceil(ScaleFactor(s)*templateImage.rows);
+			int length=round(scaleRatio*templateImage.rows);
 
 			resize(templateImage, resizedTemplate, Size(length, length));
-			int resizedCircleNum=min((int)floor(scaleRatio/ScaleFactor(_scaleNum-1)*_circleNum),_circleNum);
+			int resizedCircleNum=round(scaleRatio/_finalScale*_circleNum);
 			int templateRowCenter=(resizedTemplate.rows-1)/2;
 			int templateColCenter=(resizedTemplate.cols-1)/2;
 			for (int c=0; c<resizedCircleNum; c++) 
