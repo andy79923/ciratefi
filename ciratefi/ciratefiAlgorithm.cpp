@@ -122,7 +122,7 @@ namespace Ciratefi
 				meanCqi+=_cq[sn+i];
 
 			}
-			meanCqi/=(double)resizedCircleNum;
+			meanCqi/=resizedCircleNum;
 			for(int i=0;i<resizedCircleNum;i++)
 			{
 				cqi[s][i]-=meanCqi;
@@ -132,11 +132,11 @@ namespace Ciratefi
 
 		_cis.clear();
 		int n=sourceImage.rows*sourceImage.cols;
-		int smallestRadius=ceil(ScaleFactor(0)*_templateRadius);
+		int smallestRadius=round(ScaleFactor(0)*_templateRadius);
 		int lastRow=sourceImage.rows-smallestRadius;
 		int lastCol=sourceImage.cols-smallestRadius;
 		_cis.reserve((lastRow-smallestRadius)*(lastCol-smallestRadius)*_scaleNum);
-		vector<double> Y;
+		vector<double> Y(_circleNum);
 		for (int y=smallestRadius; y<lastRow; y++) 
 		{
 			int rn=y*sourceImage.cols;
@@ -148,10 +148,9 @@ namespace Ciratefi
 				{
 					vector<double>& X=cqi[s];
 					double X2=cqi2[s];
-					Y.resize(cqi[s].size());
 					double meanY=0;
 					double Y2=0;
-					for (int i=Y.size()-1; i>=0; i--)
+					for (int i=X.size()-1; i>=0; i--)
 					{
 						Y[i]=_ca[i*n+rn+x];
 						if(Y[i]<0.0)
@@ -162,17 +161,14 @@ namespace Ciratefi
 						meanY+=Y[i];
 					}
 					if(meanY<0) continue;
-					meanY/=(double)Y.size();
-					for(int i=0;i<Y.size();i++)
-					{
-						Y[i]-=meanY;
-						Y2+=Y[i]*Y[i];
-					}
+					meanY/=X.size();
 
 					double coef=0;
-					for(int i=0; i<X.size(); i++)
+					for(int i=0;i<X.size();i++)
 					{
+						Y[i]-=meanY;
 						coef+=X[i]*Y[i];
+						Y2+=Y[i]*Y[i];
 					}
 					coef/=sqrt(X2*Y2);
 					if (_isMatchNegative==true) coef=abs(coef);
