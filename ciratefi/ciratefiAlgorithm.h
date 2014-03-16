@@ -24,10 +24,9 @@ namespace Ciratefi
 	class CiratefiData
 	{
 	public:
-		CiratefiData():_scaleNum(11),_initialScale(0.5),_finalScale(1.5),_angleNum(60),_scaleThreshold(0.95),_angleThreshold(0.8),_nccThreshold(0.9)
-			,_isMatchNegative(false),_circleNum(16),_initialRadius(0),_finalRadius(-1),_tefiTolerance(1){}
+		CiratefiData():_scaleNum(5),_initialScale(0.5),_finalScale(1.0),_angleNum(36),_scaleThreshold(0.95),_angleThreshold(0.8),_nccThreshold(0.9)
+			,_isMatchNegative(false),_circleNum(16),_tefiTolerance(1){}
 		void CountParameter(cv::Mat& templateImage);
-		double scale(double s){ return _initialScale*pow(_passoesc,s);}
 		void SetScaleNum(int scaleNum){_scaleNum=scaleNum;}
 		void SetInitialScale(double initialScale){_initialScale=initialScale;}
 		void SetFinalScale(double finalScale){_finalScale=finalScale;}
@@ -37,11 +36,12 @@ namespace Ciratefi
 		void SetNccThreshold(double nccThreshold){_nccThreshold=nccThreshold;}
 		void SetMatchNegative(bool isMatchNegative){_isMatchNegative=isMatchNegative;}
 		void SetCircleNum(int circleNum){_circleNum=circleNum;}
-		void SetInitialRadius(double initialRadius){_initialRadius=initialRadius;}
 		void SetTefiTolerance(int tefiTolerance){_tefiTolerance=tefiTolerance;}
 		
 		template <class T>
 		T clip(const T val, const T lower, const T upper){return std::max(lower, std::min(val, upper));}
+		double ScaleFactor(double f){ return f*_scaleDistance+_initialScale;}
+
 		double CircularSample(cv::Mat& image, int y, int x, int radius);
 		void Cisssa(cv::Mat& sourceImage);
 		cv::Mat quadradaimpar(cv::Mat& image);
@@ -67,14 +67,13 @@ namespace Ciratefi
 		double _nccThreshold;
 		bool _isMatchNegative;
 		int _circleNum;
-		double _initialRadius;
-		double _finalRadius;
 		int _tefiTolerance;
 		double _circleDistance;
-		double _passoesc;
+		double _scaleDistance;
 		double _angleDegree;
 		double _angleRadian;
 		double _templateRadius;
+		int _minTefiPixel;
 		std::vector<double> _ca;
 		std::vector<double> _cq;
 		std::vector<double> _rq;
