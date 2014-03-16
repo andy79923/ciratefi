@@ -11,7 +11,7 @@ namespace Ciratefi
 		if (_scaleNum>1) _scaleDistance=(_finalScale-_initialScale)/(_scaleNum-1); else _scaleDistance=0.0;
 		_angleDegree=360.0/_angleNum;
 		_angleRadian = _angleDegree * M_PI / 180.0;
-		_templateRadius=templateImage.rows/2;
+		_templateRadius=(templateImage.rows-1)/2;
 		if (_circleNum>1) _circleDistance=ScaleFactor(_scaleNum-1)*_templateRadius/(_circleNum-1); else _circleDistance=0.0;
 		_minTefiPixel=_templateRadius;
 	}
@@ -46,8 +46,8 @@ namespace Ciratefi
 
 	void CiratefiData::Cisssa(Mat& sourceImage) 
 	{
-		_ca.resize(_circleNum*sourceImage.rows*sourceImage.cols,-1.0);
 		int n=sourceImage.rows*sourceImage.cols;
+		_ca.assign(_circleNum*n, -1.0);
 		int smallestRadius=round(ScaleFactor(0)*_templateRadius);
 		int lastRow=sourceImage.rows-smallestRadius;
 		int lastCol=sourceImage.cols-smallestRadius;
@@ -84,7 +84,7 @@ namespace Ciratefi
 
 	void CiratefiData::Cissq(Mat& templateImage)
 	{
-		_cq.resize(_scaleNum*_circleNum, -1.0);
+		_cq.assign(_scaleNum*_circleNum, -1.0);
 		Mat resizedTemplate;
 		for (int s=0; s<_scaleNum; s++) 
 		{
@@ -146,6 +146,8 @@ namespace Ciratefi
 				int fitScale;
 				for (int s=0; s<_scaleNum; s++) 
 				{
+					int radius=round(_templateRadius*ScaleFactor(s));
+					if(y+radius>=sourceImage.rows || x+radius>=sourceImage.cols || y-radius<0 || x-radius<0) break;
 					vector<double>& X=cqi[s];
 					double X2=cqi2[s];
 					double meanY=0;
@@ -238,7 +240,7 @@ namespace Ciratefi
 		}
 		if (count>0)
 		{
-			return clip(((double)sum+(double)count/2.0)/(double)count, 0.0, 255.0);
+			return clip((sum+count/2.0)/count, 0.0, 255.0);
 		}
 		return *(image.data+centerY*image.step[0]+centerX*image.step[1]);
 	}
@@ -248,21 +250,20 @@ namespace Ciratefi
 		_rq.resize(_angleNum);
 		for (int a=0; a<_angleNum; a++)
 		{
-			_rq[a]=RadialSample(templateImage, _templateRadius, _templateRadius, _angleRadian*a,_templateRadius);
+			_rq[a]=RadialSample(templateImage, _templateRadius, _templateRadius, _angleRadian*a, _templateRadius);
 		}
 	}
 
 	void CiratefiData::Rafi(Mat& sourceImage)
 	{
-		vector<double> X(_angleNum);
-		for(int i=0; i<_angleNum; i++) X[i]=_rq[i];
+		vector<double> X(_rq.begin(), _rq.end());
 		double meanX=0;
 		double X2=0;
 		for(int i=0;i<_angleNum;i++)
 		{
 			meanX+=X[i];
 		}
-		meanX/=(double)_angleNum;
+		meanX/=_angleNum;
 		for(int i=0;i<_angleNum;i++)
 		{
 			X[i]-=meanX;
@@ -277,7 +278,6 @@ namespace Ciratefi
 			CorrData& candidate=_cis[i];
 
 			double scaleRatio=ScaleFactor(candidate.GetScale());
-			double angleRange=2.0*M_PI/_angleNum;
 			int y=candidate.GetRow();
 			int x=candidate.GetCol();
 			double maxCoef=-2; int fitAngle=0;
@@ -285,11 +285,11 @@ namespace Ciratefi
 			double meanY=0;
 			for (int a=0; a<_angleNum; a++)
 			{
-				Y[a]=RadialSample(sourceImage, y, x, a*angleRange, _templateRadius*scaleRatio);
+				Y[a]=RadialSample(sourceImage, y, x, a*_angleRadian, _templateRadius*scaleRatio);
 				meanY+=Y[a];
 
 			}
-			meanY/=(double)_angleNum;
+			meanY/=_angleNum;
 			double Y2=0;
 			for(int a=0; a<_angleNum; a++)
 			{
@@ -346,8 +346,7 @@ namespace Ciratefi
 
 		_tes.clear();
 		_tes.reserve(_ras.size()*(4*_tefiTolerance+2*_tefiTolerance+1));//_ras.size()*total scale number*total angle number
-		vector<double> Y;
-		Y.reserve(pow(round(ScaleFactor(_scaleNum-1)*_templateRadius),2));
+		vector<double> Y(pow(round(ScaleFactor(_scaleNum-1)*templateImage.rows),2));
 
 		for(int i=0; i<_ras.size(); i++)
 		{
@@ -355,23 +354,22 @@ namespace Ciratefi
 			int y=candidate.GetRow();
 			int x=candidate.GetCol();
 			double maxCoef=-2;
-			int initialScale=clip(candidate.GetScale()-_tefiTolerance, 0, _scaleNum);
-			int finalScale=clip(candidate.GetScale()+_tefiTolerance, 0, _scaleNum);
+			int initialScale=clip(candidate.GetScale()-_tefiTolerance, 0, _scaleNum-1);
+			int finalScale=clip(candidate.GetScale()+_tefiTolerance+1, 0, _scaleNum);
 			int initialAngle=candidate.GetAngle()-_tefiTolerance;
 			int finalAngle=candidate.GetAngle()+_tefiTolerance+1;
 			int fitScale=0, fitAngle=0;
 			for(int s=initialScale; s<finalScale;s++)
 			{
 				int sn=s*_angleNum;
+				int length=round(ScaleFactor(s)*templateImage.rows);
+				int radius=(length-1)/2;
+				if(y+radius>=sourceImage.rows || x+radius>=sourceImage.cols || y-radius<0 || x-radius<0) break;
 				for(int a=initialAngle; a<finalAngle; a++)
 				{
 					int a2=a%_angleNum;
 					if(a2<0) a2+=_angleNum;
 					double coef=0;
-					double scaleRatio=ScaleFactor(s);
-					int length=round(scaleRatio*templateImage.rows);
-					int radius=(length-1)/2;
-
 					if(possibleTemplateX2[sn+a2]<0.0)
 					{
 						possibleTemplateX2[sn+a2]=0;
@@ -380,7 +378,7 @@ namespace Ciratefi
 
 						double angle=a2*_angleDegree;
 						possibleTemplateX[sn+a2].reserve(length*length);
-						possibleCheck[sn+a2].resize(length*length, true);
+						possibleCheck[sn+a2].assign(length*length, true);
 						resize(templateImage,possibleTemplate, Size(length, length));
 						Mat affine=getRotationMatrix2D(Point2f(radius, radius), angle, 1.0);
 						warpAffine(possibleTemplate, possibleTemplate, affine, possibleTemplate.size());
@@ -396,12 +394,11 @@ namespace Ciratefi
 									meanX+=possibleTemplateX[sn+a2].back();
 									continue;
 								}
-								*(possibleTemplate.data+y*possibleTemplate.step[0]+x*possibleTemplate.step[1])=0;
 								possibleCheck[sn+a2][yn+x]=false;
 
 							}
 						}
-						meanX/=(double)possibleTemplateX[sn+a2].size();
+						meanX/=possibleTemplateX[sn+a2].size();
 						for(int j=0; j<possibleTemplateX[sn+a2].size(); j++)
 						{
 							possibleTemplateX[sn+a2][j]-=meanX;
@@ -414,7 +411,7 @@ namespace Ciratefi
 					int c1=x-radius, c2=c1+length;
 					int r1=y-radius, r2=r1+length;
 					double meanY=0;
-					Y.clear();
+					int k=0;
 					for(int row=r1; row<r2; row++)
 					{
 						int yn=(row-r1)*length;
@@ -422,20 +419,15 @@ namespace Ciratefi
 						{
 							if(possibleCheck[sn+a2][yn+col-c1]==true)
 							{
-								Y.push_back(*(sourceImage.data+row*sourceImage.step[0]+col*sourceImage.step[1]));
-								meanY+=Y.back();
+								Y[k]=*(sourceImage.data+row*sourceImage.step[0]+col*sourceImage.step[1]);
+								meanY+=Y[k++];
 							}
 						}
 					}
-					meanY/=(double)Y.size();
-
-					if(X.size()!=Y.size())
-					{
-						MessageBox(NULL, "Tefi: size is not the same", "Error", MB_ICONERROR | MB_OK);
-					}
+					meanY/=X.size();
 
 					double Y2=0;
-					for(int j=0; j<Y.size(); j++)
+					for(int j=0; j<X.size(); j++)
 					{
 						Y[j]-=meanY;
 						Y2+=Y[j]*Y[j];
@@ -501,7 +493,6 @@ namespace Ciratefi
 				MessageBox(NULL, "DrawRafiResult: out of range", "Error", MB_ICONERROR | MB_OK);
 				return Mat();
 			}
-			//tefiResult.at<Vec3b>(row, col)=Vec3b(0, 0, 255);
 			circle(tefiResult, Point(x1, y1), radius, Scalar(0,0,255),2);
 			line(tefiResult,Point(x1,y1),Point(x2,y2),Scalar(0,0,255),2);
 		}
